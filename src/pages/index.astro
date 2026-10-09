@@ -76,7 +76,7 @@ const specs = [
 	{ k: 'Frecuencia', v: '910.525 MHz' },
 	{ k: 'Ancho de banda', v: '62.5 kHz' },
 	{ k: 'Factor de dispersión', v: 'SF7' },
-	{ k: 'Tasa de codificación', v: 'CR 4/8' },
+	{ k: 'Tasa de codificación', v: 'CR 5' },
 	{ k: 'Banda', v: '902–928 MHz ISM' },
 ];
 
@@ -359,10 +359,9 @@ const peakDelays = peaks.map((p) => ((p.x - xStart) / (xEnd - xStart)) * drawSec
 							))}
 						</dl>
 						<p class="mt-5 text-xs leading-relaxed text-[var(--pine-soft)]">
-							Subimos la tasa de codificación a 4/8: con tanta sierra de por medio, ese margen
-							extra ayuda a reconstruir un paquete que llega débil o rebotado. Cuesta más tiempo
-							de transmisión, pero en Puerto Rico vale la pena. Confirma los valores en el
-							selector de la app antes de transmitir — pueden cambiar entre versiones.
+							Valores del preset comunitario USA/Canadá usado en la mayoría de redes MeshCore de
+							Estados Unidos y Puerto Rico. Confírmalos en el selector de la app antes de
+							transmitir — pueden cambiar entre versiones.
 						</p>
 					</div>
 				</div>
