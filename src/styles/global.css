@@ -1,1 +1,146 @@
+@import url("https://fonts.googleapis.com/css2?family=Big+Shoulders:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap");
 @import "tailwindcss";
+
+:root {
+	--paper: #ece4d0;
+	--paper-raised: #f6f1e4;
+	--ink: #1e2a22;
+	--pine: #3f5748;
+	--pine-soft: #4f6456;
+	--contour: #c3b795;
+	--line: #b7aa85;
+	--signal: #cc5a1e;
+	--signal-dark: #a8480f;
+	--signal-darker: #7e370c;
+	--vhf: #2b6f86;
+
+	--font-display: "Big Shoulders", "Arial Narrow", sans-serif;
+	--font-body: "IBM Plex Sans", system-ui, sans-serif;
+	--font-mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+html {
+	scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	html {
+		scroll-behavior: auto;
+	}
+	* {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+	}
+}
+
+body {
+	background-color: var(--paper);
+	color: var(--ink);
+	font-family: var(--font-body);
+	-webkit-font-smoothing: antialiased;
+}
+
+a {
+	color: inherit;
+}
+
+:focus-visible {
+	outline: 2px solid var(--signal);
+	outline-offset: 3px;
+}
+
+.font-display {
+	font-family: var(--font-display);
+}
+
+.font-mono {
+	font-family: var(--font-mono);
+}
+
+.contour-rule {
+	background-image: repeating-linear-gradient(
+		to right,
+		var(--line) 0,
+		var(--line) 6px,
+		transparent 6px,
+		transparent 14px
+	);
+	height: 1px;
+}
+
+.btn-primary {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	background-color: var(--signal-dark);
+	color: var(--paper-raised);
+	font-family: var(--font-body);
+	font-weight: 600;
+	padding: 0.85rem 1.6rem;
+	border: 1px solid var(--signal-dark);
+	transition: background-color 150ms ease;
+}
+
+.btn-primary:hover {
+	background-color: var(--signal-darker);
+}
+
+.btn-secondary {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	background-color: transparent;
+	color: var(--ink);
+	font-family: var(--font-body);
+	font-weight: 600;
+	padding: 0.85rem 1.6rem;
+	border: 1px solid var(--pine);
+	transition: background-color 150ms ease, color 150ms ease;
+}
+
+.btn-secondary:hover {
+	background-color: var(--pine);
+	color: var(--paper-raised);
+}
+
+.nav-link {
+	position: relative;
+	color: var(--pine);
+	font-weight: 500;
+	text-decoration: none;
+}
+
+.nav-link:hover {
+	color: var(--ink);
+}
+
+.step-row {
+	border-top: 1px solid var(--line);
+}
+
+.step-row:last-child {
+	border-bottom: 1px solid var(--line);
+}
+
+.spec-plate {
+	background-color: var(--paper-raised);
+	border: 1px solid var(--pine);
+}
+
+.spec-plate dt {
+	font-family: var(--font-body);
+	color: var(--pine);
+}
+
+.spec-plate dd {
+	font-family: var(--font-mono);
+	color: var(--ink);
+	font-weight: 500;
+}

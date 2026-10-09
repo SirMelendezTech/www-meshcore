@@ -7,22 +7,61 @@ interface Props {
 }
 
 const {
-	title = 'MeshCore Puerto Rico',
-	description = 'Red de comunicación mesh LoRa descentralizada para Puerto Rico. Comunicación resiliente sin depender de internet ni torres celulares.',
+	title = 'MeshCore Puerto Rico — red mesh LoRa comunitaria',
+	description = 'Mensajes que no dependen de la señal celular. MeshCore Puerto Rico es una red mesh LoRa construida por la comunidad: configura tu radio, únete a la red y mantente comunicado cuando la infraestructura falla.',
 } = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const ogImageURL = new URL('/og.png', Astro.site);
 ---
 
 <!doctype html>
 <html lang="es">
 	<head>
 		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="generator" content={Astro.generator} />
-		<meta name="description" content={description} />
+
 		<title>{title}</title>
+		<meta name="description" content={description} />
+		<link rel="canonical" href={canonicalURL} />
+
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="alternate icon" href="/favicon.ico" />
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+		<link rel="manifest" href="/site.webmanifest" />
+		<meta name="theme-color" content="#1e2a22" />
+
+		<meta property="og:type" content="website" />
+		<meta property="og:site_name" content="MeshCore Puerto Rico" />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:url" content={canonicalURL} />
+		<meta property="og:image" content={ogImageURL} />
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
+		<meta property="og:locale" content="es_PR" />
+
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={title} />
+		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content={ogImageURL} />
+
+		<script type="application/ld+json" set:html={JSON.stringify({
+			'@context': 'https://schema.org',
+			'@type': 'Organization',
+			name: 'MeshCore Puerto Rico',
+			url: 'https://meshcore.prmsh.com',
+			logo: new URL('/icon-512.png', Astro.site).toString(),
+			description,
+			areaServed: {
+				'@type': 'AdministrativeArea',
+				name: 'Puerto Rico',
+			},
+			sameAs: ['https://discord.gg/3v6rRhNRpD', 'https://prmsh.com'],
+		})} />
 	</head>
-	<body class="bg-slate-950 text-slate-100 antialiased">
+	<body>
 		<slot />
 	</body>
 </html>

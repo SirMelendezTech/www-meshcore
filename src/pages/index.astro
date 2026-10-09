@@ -1,207 +1,350 @@
 ---
 import Layout from '../layouts/Layout.astro';
 
-const features = [
+const rasgos = [
 	{
 		title: 'Resiliente ante huracanes',
-		desc: 'Sigue comunicado cuando la red celular y el internet caen. Diseñado para emergencias como María, Fiona y los próximos eventos.',
+		desc: 'Sigue funcionando cuando la señal celular y el internet caen, como pasó semanas tras el huracán María (2017) y de nuevo con Fiona (2022).',
 	},
 	{
-		title: 'Sin internet ni torres celulares',
-		desc: 'Cada dispositivo es un nodo. Los mensajes saltan de nodo a nodo (mesh) usando radios LoRa de largo alcance.',
+		title: 'Sin torres ni compañía de por medio',
+		desc: 'Cada radio es un nodo. Los mensajes saltan de nodo a nodo por LoRa — no hay factura, contrato ni cobertura que depender de un tercero.',
 	},
 	{
-		title: 'Código abierto',
-		desc: 'Firmware y protocolo abiertos. Cualquiera puede auditar, mejorar y correr su propio nodo.',
+		title: 'Firmware y protocolo abiertos',
+		desc: 'MeshCore es de código abierto. Cualquiera puede revisar cómo funciona, correr su propio nodo o levantar un repetidor.',
 	},
 	{
-		title: 'Largo alcance, bajo consumo',
-		desc: 'Los radios LoRa alcanzan varios kilómetros por salto con muy poco consumo de batería.',
+		title: 'El terreno ayuda',
+		desc: 'La Cordillera Central le da línea de vista a los saltos LoRa entre barrios, pueblos y costas — más pico, más alcance.',
 	},
 ];
 
-const steps = [
+const hardware = [
 	{
-		n: '01',
-		title: 'Consigue hardware compatible',
-		desc: 'Un dispositivo ESP32 o nRF52 con módulo LoRa (ej. Heltec, RAK, LilyGO) sintonizado a la frecuencia usada en PR.',
+		nombre: 'Heltec V3 / Wireless Tracker',
+		nota: 'Pantalla integrada, buena opción para empezar y ver el estado del nodo.',
 	},
 	{
-		n: '02',
-		title: 'Instala el firmware MeshCore',
-		desc: 'Flashea tu dispositivo con el firmware de MeshCore y configúralo con tu nombre de nodo.',
+		nombre: 'RAK4631 + RAK19007',
+		nota: 'Módulo nRF52, bajo consumo, cómodo para un nodo que queda encendido todo el día.',
 	},
 	{
-		n: '03',
-		title: 'Únete al canal de Puerto Rico',
-		desc: 'Configura el canal/clave pública de la comunidad para empezar a ver y repetir mensajes de otros nodos en la isla.',
+		nombre: 'Seeed XIAO + módulo LoRa',
+		nota: 'El más pequeño y barato de armar; requiere más trabajo de ensamblaje.',
 	},
 	{
-		n: '04',
-		title: 'Suma tu nodo a la red',
-		desc: 'Coloca tu nodo en alto (azotea, balcón, cerro) para ampliar la cobertura de todos los que ya están en la red.',
+		nombre: 'LilyGO T-Deck / T3S3',
+		nota: 'Con teclado o batería más grande, útil para llevarlo de excursión o en el carro.',
 	},
 ];
+
+const configPasos = [
+	{
+		n: '1',
+		title: 'Instala la app MeshCore',
+		desc: 'Disponible para Android e iOS. Es la app oficial del proyecto, independiente de este sitio.',
+	},
+	{
+		n: '2',
+		title: 'Empareja tu radio por Bluetooth',
+		desc: 'Enciende el dispositivo, ábrelo en la app y confirma el emparejamiento.',
+	},
+	{
+		n: '3',
+		title: 'Elige el preset de radio “USA/Canadá”',
+		desc: 'Puerto Rico está bajo la jurisdicción de la FCC, así que usa el mismo preset que el resto de Estados Unidos — no el de Europa.',
+	},
+	{
+		n: '4',
+		title: 'Guarda y reinicia el nodo',
+		desc: 'El radio aplica los valores y vuelve a sincronizarse con los nodos cercanos.',
+	},
+];
+
+const specs = [
+	{ k: 'Frecuencia', v: '910.525 MHz' },
+	{ k: 'Ancho de banda', v: '62.5 kHz' },
+	{ k: 'Factor de dispersión', v: 'SF7' },
+	{ k: 'Tasa de codificación', v: 'CR 4/5' },
+	{ k: 'Banda', v: '902–928 MHz ISM' },
+];
+
+const unetePasos = [
+	{
+		n: '1',
+		title: 'Pide el canal vigente en Discord',
+		desc: 'El nombre y la clave del canal público de Puerto Rico se comparten y actualizan ahí — no los fijamos en esta página para que nunca queden desactualizados.',
+	},
+	{
+		n: '2',
+		title: 'Agrégalo en tu app',
+		desc: 'Con esos datos vas a ver y repetir los mensajes de los demás nodos de la isla.',
+	},
+	{
+		n: '3',
+		title: 'Pon tu nodo en alto',
+		desc: 'Azotea, balcón o un punto elevado del terreno — entre más alto, más fácil le llega la señal al próximo nodo.',
+	},
+	{
+		n: '4',
+		title: 'Avisa dónde quedó',
+		desc: 'Comparte tu ubicación aproximada en Discord para que el resto de la comunidad sepa por dónde hay cobertura.',
+	},
+];
+
+const peaks = [
+	{ x: 70, y: 150, label: 'Toro Negro', elev: '≈1,200 m' },
+	{ x: 195, y: 85, label: 'Cerro de Punta', elev: '≈1,338 m' },
+	{ x: 335, y: 115, label: 'Monte Guilarte', elev: '≈1,205 m' },
+	{ x: 475, y: 165, label: 'El Yunque', elev: '≈1,065 m' },
+];
+const ridgeOutline = `M0,300 L${peaks[0].x - 65},245 L${peaks[0].x},${peaks[0].y} L${peaks[0].x + 70},235 L${peaks[1].x - 55},205 L${peaks[1].x},${peaks[1].y} L${peaks[1].x + 60},220 L${peaks[2].x - 55},200 L${peaks[2].x},${peaks[2].y} L${peaks[2].x + 55},225 L${peaks[3].x - 60},235 L${peaks[3].x},${peaks[3].y} L${peaks[3].x + 65},245 L560,300 Z`;
+const hopPath = `M${peaks.map((p) => `${p.x},${p.y}`).join(' L')}`;
 ---
 
 <Layout>
-	<header class="sticky top-0 z-50 border-b border-white/10 bg-slate-950/80 backdrop-blur">
-		<nav class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-			<a href="#top" class="flex items-center gap-2 font-semibold tracking-tight">
-				<span class="inline-block h-2.5 w-2.5 rounded-full bg-emerald-400"></span>
-				MeshCore<span class="text-emerald-400">PR</span>
+	<a href="#contenido" class="skip-link">Saltar al contenido</a>
+
+	<header class="sticky top-0 z-50 border-b border-[var(--line)] bg-[var(--paper)]/95 backdrop-blur">
+		<nav class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
+			<a href="#top" class="flex items-center gap-2.5">
+				<svg width="30" height="30" viewBox="0 0 48 48" aria-hidden="true">
+					<path d="M4 36 L16 14 L22 22 L32 8 L44 36 Z" fill="var(--pine)" />
+					<circle cx="32" cy="8" r="2.6" fill="var(--signal)" />
+					<path d="M37.2 4.4 A 8.4 8.4 0 0 1 39.6 11.4" fill="none" stroke="var(--signal)" stroke-width="2" stroke-linecap="round" />
+					<path d="M40.6 1.6 A 13 13 0 0 1 44 12.1" fill="none" stroke="var(--signal)" stroke-width="2" stroke-linecap="round" />
+				</svg>
+				<span class="font-display text-xl font-bold tracking-tight text-[var(--ink)]">
+					MeshCore<span class="text-[var(--signal)]">PR</span>
+				</span>
 			</a>
-			<div class="hidden gap-8 text-sm text-slate-300 sm:flex">
-				<a href="#que-es" class="hover:text-white">Qué es</a>
-				<a href="#como-unirte" class="hover:text-white">Cómo unirte</a>
-				<a href="#cobertura" class="hover:text-white">Cobertura</a>
-				<a href="#comunidad" class="hover:text-white">Comunidad</a>
+			<div class="hidden items-center gap-7 text-[0.95rem] lg:flex">
+				<a href="#que-es" class="nav-link">Qué es</a>
+				<a href="#hardware" class="nav-link">Hardware</a>
+				<a href="#configura" class="nav-link">Configura tu radio</a>
+				<a href="#unete" class="nav-link">Únete</a>
+				<a href="#comunidad" class="nav-link">Comunidad</a>
 			</div>
-			<a
-				href="#como-unirte"
-				class="rounded-full bg-emerald-400 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-emerald-300"
-			>
-				Únete a la red
-			</a>
+			<a href="#configura" class="btn-primary px-4! py-2! text-sm">Configura tu radio</a>
 		</nav>
 	</header>
 
-	<main id="top">
+	<main id="contenido">
 		<!-- Hero -->
-		<section class="relative overflow-hidden px-6 py-24 sm:py-32">
-			<div
-				class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(16,185,129,0.15),transparent_60%)]"
-			>
-			</div>
-			<div class="relative mx-auto max-w-4xl text-center">
-				<p class="mb-4 inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-400/10 px-4 py-1 text-xs font-medium text-emerald-300">
-					Proyecto comunitario · Puerto Rico
-				</p>
-				<h1 class="text-4xl font-bold tracking-tight sm:text-6xl">
-					Comunicación que no se cae<br class="hidden sm:block" />
-					cuando la isla se queda sin señal
-				</h1>
-				<p class="mx-auto mt-6 max-w-2xl text-lg text-slate-400">
-					MeshCore Puerto Rico es una red mesh de radios LoRa construida por la comunidad.
-					Sin internet, sin torres celulares, sin compañías de por medio — solo vecinos
-					repitiendo mensajes entre nodos.
-				</p>
-				<div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-					<a
-						href="#como-unirte"
-						class="w-full rounded-full bg-emerald-400 px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-emerald-300 sm:w-auto"
-					>
-						Cómo unirte a la red
-					</a>
-					<a
-						href="#que-es"
-						class="w-full rounded-full border border-white/15 px-6 py-3 text-sm font-semibold text-slate-200 transition hover:bg-white/5 sm:w-auto"
-					>
-						Qué es MeshCore
-					</a>
+		<section id="top" class="border-b border-[var(--line)] px-6 pb-16 pt-14 sm:pb-24 sm:pt-20">
+			<div class="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[1.05fr_1fr]">
+				<div>
+					<p class="font-mono text-sm text-[var(--pine)]">Red comunitaria — Puerto Rico</p>
+					<h1 class="font-display mt-3 text-5xl font-bold leading-[0.95] tracking-tight text-[var(--ink)] sm:text-6xl">
+						Cuando la señal celular cae, la sierra sigue hablando.
+					</h1>
+					<p class="mt-6 max-w-lg text-lg leading-relaxed text-[var(--pine)]">
+						MeshCore Puerto Rico es una red mesh de radios LoRa que repite mensajes de pico en
+						pico. Sin internet, sin torres celulares y sin compañía de por medio — solo vecinos
+						retransmitiendo mensajes entre nodos.
+					</p>
+					<div class="mt-9 flex flex-col gap-3 sm:flex-row">
+						<a href="#configura" class="btn-primary">Configura tu radio</a>
+						<a href="#que-es" class="btn-secondary">Cómo funciona</a>
+					</div>
 				</div>
+
+				<figure class="mt-2">
+					<svg viewBox="0 0 560 320" class="w-full" role="img" aria-labelledby="ridge-title">
+						<title id="ridge-title">Picos de la Cordillera Central de Puerto Rico enlazados por saltos de radio</title>
+						<path d={ridgeOutline} fill="var(--paper-raised)" stroke="var(--line)" stroke-width="1.5" />
+						<path d={hopPath} fill="none" stroke="var(--signal)" stroke-width="1.5" stroke-dasharray="2 7" stroke-linecap="round" />
+						{peaks.map((p) => (
+							<g>
+								<circle cx={p.x} cy={p.y} r="5" fill="var(--signal)" />
+								<circle cx={p.x} cy={p.y} r="9" fill="none" stroke="var(--signal)" stroke-width="1" opacity="0.45" />
+							</g>
+						))}
+						{peaks.map((p) => (
+							<text x={p.x} y={p.y - 16} text-anchor="middle" class="font-mono" font-size="11" fill="var(--pine)">
+								{p.label}
+							</text>
+						))}
+					</svg>
+					<figcaption class="mt-3 font-mono text-xs text-[var(--pine-soft)]">
+						Ilustración de saltos entre picos de la Cordillera Central — no representa cobertura real.
+					</figcaption>
+				</figure>
 			</div>
 		</section>
 
 		<!-- Qué es -->
-		<section id="que-es" class="border-t border-white/10 px-6 py-20">
+		<section id="que-es" class="border-b border-[var(--line)] px-6 py-20">
 			<div class="mx-auto max-w-6xl">
-				<h2 class="text-sm font-semibold uppercase tracking-widest text-emerald-400">Qué es</h2>
-				<p class="mt-2 max-w-3xl text-2xl font-semibold sm:text-3xl">
-					Una red de radios que se cubren los unos a los otros.
-				</p>
-				<p class="mt-4 max-w-3xl text-slate-400">
-					MeshCore es un protocolo y firmware de código abierto para redes mesh sobre LoRa.
-					Cada dispositivo (nodo) recibe y retransmite mensajes de texto a otros nodos dentro
-					de su alcance, extendiendo la cobertura sin depender de infraestructura centralizada.
-				</p>
-				<div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-					{features.map((f) => (
-						<div class="rounded-2xl border border-white/10 bg-white/5 p-6">
-							<h3 class="font-semibold text-white">{f.title}</h3>
-							<p class="mt-2 text-sm text-slate-400">{f.desc}</p>
-						</div>
-					))}
-				</div>
-			</div>
-		</section>
-
-		<!-- Cómo unirte -->
-		<section id="como-unirte" class="border-t border-white/10 px-6 py-20">
-			<div class="mx-auto max-w-6xl">
-				<h2 class="text-sm font-semibold uppercase tracking-widest text-emerald-400">Cómo unirte</h2>
-				<p class="mt-2 max-w-3xl text-2xl font-semibold sm:text-3xl">
-					Pon tu nodo en el aire en cuatro pasos.
-				</p>
-				<div class="mt-12 grid gap-8 sm:grid-cols-2">
-					{steps.map((s) => (
-						<div class="flex gap-4">
-							<span class="text-3xl font-bold text-emerald-400/50">{s.n}</span>
-							<div>
-								<h3 class="font-semibold text-white">{s.title}</h3>
-								<p class="mt-1 text-sm text-slate-400">{s.desc}</p>
+				<div class="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
+					<div>
+						<h2 class="font-display text-3xl font-bold text-[var(--ink)] sm:text-4xl">
+							Radios que se cubren los unos a los otros
+						</h2>
+						<p class="mt-4 max-w-md text-[var(--pine)]">
+							MeshCore es un protocolo y firmware de código abierto para redes mesh sobre LoRa.
+							Cada nodo recibe y retransmite mensajes a los demás dentro de su alcance,
+							extendiendo la cobertura sin depender de infraestructura centralizada.
+						</p>
+						<p class="mt-4 max-w-md text-[var(--pine)]">
+							Este proyecto es hermano de
+							<a href="https://prmsh.com" class="underline decoration-[var(--line)] underline-offset-4 hover:text-[var(--ink)]">PRMSH (prmsh.com)</a>,
+							la red Meshtastic de la isla. Comparten comunidad y Discord; el protocolo de radio
+							es distinto.
+						</p>
+					</div>
+					<dl>
+						{rasgos.map((f) => (
+							<div class="step-row grid gap-1 py-5 sm:grid-cols-[1fr_1.6fr] sm:gap-6">
+								<dt class="font-display text-lg font-semibold text-[var(--ink)]">{f.title}</dt>
+								<dd class="text-[var(--pine)]">{f.desc}</dd>
 							</div>
+						))}
+					</dl>
+				</div>
+			</div>
+		</section>
+
+		<!-- Hardware -->
+		<section id="hardware" class="border-b border-[var(--line)] px-6 py-20">
+			<div class="mx-auto max-w-6xl">
+				<h2 class="font-display text-3xl font-bold text-[var(--ink)] sm:text-4xl">
+					Consigue un radio compatible
+				</h2>
+				<p class="mt-4 max-w-2xl text-[var(--pine)]">
+					Necesitas una placa ESP32 o nRF52 con módulo LoRa, de la variante de
+					<strong class="text-[var(--ink)]">915 MHz para EE.UU./Canadá</strong> — muchas tiendas
+					venden la versión de 868 MHz pensada para Europa, que no sirve aquí. Un radio cuesta
+					entre $25 y $60 según el modelo.
+				</p>
+				<div class="mt-10 grid gap-x-8 gap-y-6 sm:grid-cols-2">
+					{hardware.map((h) => (
+						<div class="border-l-2 border-[var(--pine)] py-1 pl-5">
+							<h3 class="font-display text-lg font-semibold text-[var(--ink)]">{h.nombre}</h3>
+							<p class="mt-1 text-sm text-[var(--pine)]">{h.nota}</p>
 						</div>
 					))}
 				</div>
 			</div>
 		</section>
 
-		<!-- Cobertura -->
-		<section id="cobertura" class="border-t border-white/10 px-6 py-20">
+		<!-- Configura tu radio -->
+		<section id="configura" class="border-b border-[var(--line)] px-6 py-20">
 			<div class="mx-auto max-w-6xl">
-				<h2 class="text-sm font-semibold uppercase tracking-widest text-emerald-400">Cobertura</h2>
-				<p class="mt-2 max-w-3xl text-2xl font-semibold sm:text-3xl">
-					Mapa de nodos en construcción.
+				<h2 class="font-display text-3xl font-bold text-[var(--ink)] sm:text-4xl">
+					Configura tu radio con el preset de EE.UU.
+				</h2>
+				<p class="mt-4 max-w-2xl text-[var(--pine)]">
+					Si tu radio llegó de fábrica o lo acabas de flashear, tienes que fijar la región antes
+					de usarlo. Puerto Rico usa el preset <strong class="text-[var(--ink)]">USA/Canadá</strong>,
+					el mismo que el resto del territorio continental.
 				</p>
-				<div class="mt-8 flex flex-col items-start gap-4 rounded-2xl border border-dashed border-white/15 bg-white/5 p-8 sm:flex-row sm:items-center sm:justify-between">
-					<p class="max-w-xl text-slate-400">
-						Estamos levantando el mapa de nodos activos en la isla. Si tienes un nodo
-						corriendo, súmalo a la comunidad para que aparezca aquí.
-					</p>
-					<a
-						href="#comunidad"
-						class="shrink-0 rounded-full border border-white/15 px-5 py-2.5 text-sm font-semibold text-slate-200 transition hover:bg-white/5"
-					>
-						Registrar mi nodo
-					</a>
+
+				<div class="mt-10 grid gap-10 lg:grid-cols-[1.3fr_1fr]">
+					<ol class="list-none">
+						{configPasos.map((s) => (
+							<li class="step-row flex gap-5 py-5">
+								<span class="font-display shrink-0 text-2xl font-bold text-[var(--signal)]">{s.n}</span>
+								<div>
+									<h3 class="font-display text-lg font-semibold text-[var(--ink)]">{s.title}</h3>
+									<p class="mt-1 text-[var(--pine)]">{s.desc}</p>
+								</div>
+							</li>
+						))}
+					</ol>
+
+					<div class="spec-plate p-6">
+						<p class="font-mono text-xs uppercase tracking-wide text-[var(--pine-soft)]">Preset — USA/Canadá</p>
+						<dl class="mt-4 space-y-3">
+							{specs.map((s) => (
+								<div class="flex items-baseline justify-between gap-4 border-t border-[var(--line)] pt-3 first:border-0 first:pt-0">
+									<dt class="text-sm">{s.k}</dt>
+									<dd class="text-right text-sm">{s.v}</dd>
+								</div>
+							))}
+						</dl>
+						<p class="mt-5 text-xs leading-relaxed text-[var(--pine-soft)]">
+							Valores del preset comunitario USA/Canadá usado en la mayoría de redes MeshCore de
+							Estados Unidos y Puerto Rico. Confírmalos en el selector de la app antes de
+							transmitir — pueden cambiar entre versiones.
+						</p>
+					</div>
 				</div>
+			</div>
+		</section>
+
+		<!-- Únete -->
+		<section id="unete" class="border-b border-[var(--line)] px-6 py-20">
+			<div class="mx-auto max-w-6xl">
+				<h2 class="font-display text-3xl font-bold text-[var(--ink)] sm:text-4xl">
+					Únete a la red de la isla
+				</h2>
+				<p class="mt-4 max-w-2xl text-[var(--pine)]">
+					Con el radio configurado, ya puedes sumarte al canal público de Puerto Rico.
+				</p>
+				<ol class="mt-10 grid list-none gap-x-10 gap-y-8 sm:grid-cols-2">
+					{unetePasos.map((s) => (
+						<li class="flex gap-5">
+							<span class="font-display shrink-0 text-2xl font-bold text-[var(--pine)]">{s.n}</span>
+							<div>
+								<h3 class="font-display text-lg font-semibold text-[var(--ink)]">{s.title}</h3>
+								<p class="mt-1 text-[var(--pine)]">{s.desc}</p>
+							</div>
+						</li>
+					))}
+				</ol>
 			</div>
 		</section>
 
 		<!-- Comunidad -->
-		<section id="comunidad" class="border-t border-white/10 px-6 py-20">
+		<section id="comunidad" class="px-6 py-20">
 			<div class="mx-auto max-w-6xl">
-				<h2 class="text-sm font-semibold uppercase tracking-widest text-emerald-400">Comunidad</h2>
-				<p class="mt-2 max-w-3xl text-2xl font-semibold sm:text-3xl">
-					Coordinamos repetidores y cobertura entre todos.
-				</p>
-				<p class="mt-4 max-w-2xl text-slate-400">
-					Únete al chat de la comunidad para coordinar ubicación de repetidores, resolver
-					dudas de configuración y enterarte de activaciones durante emergencias.
-				</p>
-				<div class="mt-8 flex flex-wrap gap-4">
-					<a
-						href="#"
-						class="rounded-full bg-emerald-400 px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-emerald-300"
-					>
-						Unirme al chat
-					</a>
-					<a
-						href="#"
-						class="rounded-full border border-white/15 px-6 py-3 text-sm font-semibold text-slate-200 transition hover:bg-white/5"
-					>
-						Escribir por correo
-					</a>
+				<div class="spec-plate flex flex-col gap-8 p-8 sm:p-10 lg:flex-row lg:items-center lg:justify-between">
+					<div class="max-w-lg">
+						<h2 class="font-display text-3xl font-bold text-[var(--ink)] sm:text-4xl">
+							Coordinamos repetidores entre todos
+						</h2>
+						<p class="mt-4 text-[var(--pine)]">
+							El Discord es donde se comparte el canal vigente, se resuelven dudas de
+							configuración, se discuten ubicaciones de repetidores y se avisan activaciones
+							durante emergencias.
+						</p>
+					</div>
+					<div class="flex shrink-0 flex-col gap-3 sm:flex-row lg:flex-col">
+						<a href="https://discord.gg/3v6rRhNRpD" class="btn-primary" rel="noopener">Entrar al Discord</a>
+						<a href="https://prmsh.com" class="btn-secondary" rel="noopener">Ver la red hermana en prmsh.com</a>
+					</div>
 				</div>
 			</div>
 		</section>
 	</main>
 
-	<footer class="border-t border-white/10 px-6 py-10">
-		<div class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 text-sm text-slate-500 sm:flex-row">
-			<p>MeshCore Puerto Rico — proyecto comunitario, código abierto.</p>
-			<p>Hecho por y para la comunidad de la isla.</p>
+	<footer class="border-t border-[var(--line)] px-6 py-10">
+		<div class="mx-auto flex max-w-6xl flex-col gap-4 text-sm text-[var(--pine-soft)] sm:flex-row sm:items-center sm:justify-between">
+			<p>MeshCore Puerto Rico — proyecto comunitario, código abierto. No es un servicio de emergencia; para 911, llama al 911.</p>
+			<div class="flex gap-5">
+				<a href="https://discord.gg/3v6rRhNRpD" class="hover:text-[var(--ink)]">Discord</a>
+				<a href="https://prmsh.com" class="hover:text-[var(--ink)]">PRMSH</a>
+				<a href="https://github.com/SirMelendezTech/www-meshcore" class="hover:text-[var(--ink)]">GitHub</a>
+			</div>
 		</div>
 	</footer>
 </Layout>
+
+<style>
+	.skip-link {
+		position: absolute;
+		left: -9999px;
+		top: 0;
+		z-index: 100;
+		background: var(--signal);
+		color: var(--paper-raised);
+		padding: 0.75rem 1.25rem;
+		font-weight: 600;
+	}
+	.skip-link:focus {
+		left: 1rem;
+		top: 1rem;
+	}
+</style>
