@@ -101,6 +101,13 @@ const peaks = [
 ];
 const ridgeOutline = `M0,300 L${peaks[0].x - 65},245 L${peaks[0].x},${peaks[0].y} L${peaks[0].x + 70},235 L${peaks[1].x - 55},205 L${peaks[1].x},${peaks[1].y} L${peaks[1].x + 60},220 L${peaks[2].x - 55},200 L${peaks[2].x},${peaks[2].y} L${peaks[2].x + 55},225 L${peaks[3].x - 60},235 L${peaks[3].x},${peaks[3].y} L${peaks[3].x + 65},245 L560,300 Z`;
 const hopPath = `M${peaks.map((p) => `${p.x},${p.y}`).join(' L')}`;
+
+// The hop line sweeps left to right on load; each peak's signal pulse
+// fires at the moment that sweep reaches its x position.
+const drawSeconds = 1.8;
+const xStart = peaks[0].x;
+const xEnd = peaks[peaks.length - 1].x;
+const peakDelays = peaks.map((p) => ((p.x - xStart) / (xEnd - xStart)) * drawSeconds);
 ---
 
 <Layout>
@@ -154,15 +161,39 @@ const hopPath = `M${peaks.map((p) => `${p.x},${p.y}`).join(' L')}`;
 					<svg viewBox="0 0 560 320" class="w-full" role="img" aria-labelledby="ridge-title">
 						<title id="ridge-title">Picos de la Cordillera Central de Puerto Rico enlazados por saltos de radio</title>
 						<path d={ridgeOutline} fill="var(--paper-raised)" stroke="var(--line)" stroke-width="1.5" />
-						<path d={hopPath} fill="none" stroke="var(--signal)" stroke-width="1.5" stroke-dasharray="2 7" stroke-linecap="round" />
-						{peaks.map((p) => (
-							<g>
+						<defs>
+							<clipPath id="hop-sweep" clipPathUnits="userSpaceOnUse">
+								<rect class="hop-sweep-mask" x="0" y="0" width="560" height="320" />
+							</clipPath>
+						</defs>
+						<g clip-path="url(#hop-sweep)">
+							<path d={hopPath} fill="none" stroke="var(--signal)" stroke-width="1.5" stroke-dasharray="2 7" stroke-linecap="round" />
+							{peaks.map((p) => (
 								<circle cx={p.x} cy={p.y} r="5" fill="var(--signal)" />
-								<circle cx={p.x} cy={p.y} r="9" fill="none" stroke="var(--signal)" stroke-width="1" opacity="0.45" />
-							</g>
+							))}
+						</g>
+						{peaks.map((p, i) => (
+							<circle
+								class="hop-ping"
+								cx={p.x}
+								cy={p.y}
+								r="5"
+								fill="none"
+								stroke="var(--signal)"
+								stroke-width="1.5"
+								style={`animation-delay: ${peakDelays[i]}s`}
+							/>
 						))}
-						{peaks.map((p) => (
-							<text x={p.x} y={p.y - 16} text-anchor="middle" class="font-mono" font-size="11" fill="var(--pine)">
+						{peaks.map((p, i) => (
+							<text
+								x={p.x}
+								y={p.y - 16}
+								text-anchor="middle"
+								class="hop-label font-mono"
+								font-size="11"
+								fill="var(--pine)"
+								style={`animation-delay: ${peakDelays[i]}s`}
+							>
 								{p.label}
 							</text>
 						))}
@@ -346,5 +377,54 @@ const hopPath = `M${peaks.map((p) => `${p.x},${p.y}`).join(' L')}`;
 	.skip-link:focus {
 		left: 1rem;
 		top: 1rem;
+	}
+
+	.hop-sweep-mask {
+		transform-box: fill-box;
+		transform-origin: 0% 50%;
+		animation: sweep 1.8s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+	}
+
+	.hop-ping {
+		transform-box: fill-box;
+		transform-origin: 50% 50%;
+		opacity: 0;
+		animation: ping 0.8s ease-out forwards;
+	}
+
+	.hop-label {
+		opacity: 0;
+		animation: label-in 0.5s ease-out forwards;
+	}
+
+	@keyframes sweep {
+		from {
+			transform: scaleX(0);
+		}
+		to {
+			transform: scaleX(1);
+		}
+	}
+
+	@keyframes ping {
+		0% {
+			transform: scale(1);
+			opacity: 0.6;
+		}
+		100% {
+			transform: scale(2.6);
+			opacity: 0;
+		}
+	}
+
+	@keyframes label-in {
+		from {
+			opacity: 0;
+			transform: translateY(3px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
 	}
 </style>
