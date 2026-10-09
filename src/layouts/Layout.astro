@@ -1,0 +1,28 @@
+---
+import '../styles/global.css';
+
+interface Props {
+	title?: string;
+	description?: string;
+}
+
+const {
+	title = 'MeshCore Puerto Rico',
+	description = 'Red de comunicación mesh LoRa descentralizada para Puerto Rico. Comunicación resiliente sin depender de internet ni torres celulares.',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="generator" content={Astro.generator} />
+		<meta name="description" content={description} />
+		<title>{title}</title>
+	</head>
+	<body class="bg-slate-950 text-slate-100 antialiased">
+		<slot />
+	</body>
+</html>
