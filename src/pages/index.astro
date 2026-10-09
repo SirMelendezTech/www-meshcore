@@ -39,12 +39,22 @@ const hardware = [
 	},
 ];
 
-const configPasos = [
+const roles = [
 	{
-		n: '1',
-		title: 'Instala la app MeshCore',
-		desc: 'Disponible para Android e iOS. Es la app oficial del proyecto, independiente de este sitio.',
+		title: 'Companion',
+		desc: 'Tu radio personal. Se empareja con el teléfono o la computadora para mandar y recibir mensajes. Es el rol correcto para empezar.',
 	},
+	{
+		title: 'Repeater',
+		desc: 'Extiende la cobertura de todos los demás — no tiene chat ni pantalla, solo retransmite. Ponlo en el punto más alto que consigas: azotea, torre o cerro. Entre más alto, a más nodos alcanza.',
+	},
+	{
+		title: 'Room Server',
+		desc: 'Un tablón de mensajes compartido: guarda avisos y se los entrega a quien pase por su alcance. Útil para un punto de encuentro, un refugio o un centro comunitario.',
+	},
+];
+
+const configPasos = [
 	{
 		n: '2',
 		title: 'Empareja tu radio por Bluetooth',
@@ -66,7 +76,7 @@ const specs = [
 	{ k: 'Frecuencia', v: '910.525 MHz' },
 	{ k: 'Ancho de banda', v: '62.5 kHz' },
 	{ k: 'Factor de dispersión', v: 'SF7' },
-	{ k: 'Tasa de codificación', v: 'CR 4/5' },
+	{ k: 'Tasa de codificación', v: 'CR 4/8' },
 	{ k: 'Banda', v: '902–928 MHz ISM' },
 ];
 
@@ -99,7 +109,14 @@ const peaks = [
 	{ x: 335, y: 115, label: 'Monte Guilarte', elev: '≈1,205 m' },
 	{ x: 475, y: 165, label: 'El Yunque', elev: '≈1,065 m' },
 ];
-const ridgeOutline = `M0,300 L${peaks[0].x - 65},245 L${peaks[0].x},${peaks[0].y} L${peaks[0].x + 70},235 L${peaks[1].x - 55},205 L${peaks[1].x},${peaks[1].y} L${peaks[1].x + 60},220 L${peaks[2].x - 55},200 L${peaks[2].x},${peaks[2].y} L${peaks[2].x + 55},225 L${peaks[3].x - 60},235 L${peaks[3].x},${peaks[3].y} L${peaks[3].x + 65},245 L560,300 Z`;
+
+// Three hand-drawn silhouette layers (distant haze, named ridgeline, near
+// foreground) for a layered, naturalistic profile instead of flat triangles.
+// The mid layer's jagged vertices pass through each named peak exactly.
+const backRidge = 'M-10,300 C70,250 150,268 230,248 C310,228 390,256 470,240 C510,232 550,248 570,268 L570,300 Z';
+const midRidge = 'M-10,300 L25,255 L55,272 L70,150 L95,228 L120,198 L150,252 L175,208 L195,85 L222,202 L250,178 L275,242 L300,212 L335,115 L365,232 L395,192 L425,248 L450,222 L475,165 L505,252 L530,232 L570,300 Z';
+const frontRidge = 'M-10,300 C100,268 200,288 300,266 C400,246 480,276 570,258 L570,300 Z';
+
 const hopPath = `M${peaks.map((p) => `${p.x},${p.y}`).join(' L')}`;
 
 // The hop line sweeps left to right on load; each peak's signal pulse
@@ -129,6 +146,7 @@ const peakDelays = peaks.map((p) => ((p.x - xStart) / (xEnd - xStart)) * drawSec
 			<div class="hidden items-center gap-7 text-[0.95rem] lg:flex">
 				<a href="#que-es" class="nav-link">Qué es</a>
 				<a href="#hardware" class="nav-link">Hardware</a>
+				<a href="#roles" class="nav-link">Roles</a>
 				<a href="#configura" class="nav-link">Configura tu radio</a>
 				<a href="#unete" class="nav-link">Únete</a>
 				<a href="#comunidad" class="nav-link">Comunidad</a>
@@ -160,12 +178,19 @@ const peakDelays = peaks.map((p) => ((p.x - xStart) / (xEnd - xStart)) * drawSec
 				<figure class="mt-2">
 					<svg viewBox="0 0 560 320" class="w-full" role="img" aria-labelledby="ridge-title">
 						<title id="ridge-title">Picos de la Cordillera Central de Puerto Rico enlazados por saltos de radio</title>
-						<path d={ridgeOutline} fill="var(--paper-raised)" stroke="var(--line)" stroke-width="1.5" />
 						<defs>
+							<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+								<stop offset="0%" stop-color="var(--paper-raised)" />
+								<stop offset="100%" stop-color="var(--paper)" />
+							</linearGradient>
 							<clipPath id="hop-sweep" clipPathUnits="userSpaceOnUse">
 								<rect class="hop-sweep-mask" x="0" y="0" width="560" height="320" />
 							</clipPath>
 						</defs>
+						<rect x="0" y="0" width="560" height="260" fill="url(#sky)" opacity="0.5" />
+						<path d={backRidge} fill="var(--contour)" opacity="0.55" />
+						<path d={midRidge} fill="var(--paper-raised)" stroke="var(--line)" stroke-width="1.5" stroke-linejoin="round" />
+						<path d={frontRidge} fill="var(--paper)" />
 						<g clip-path="url(#hop-sweep)">
 							<path d={hopPath} fill="none" stroke="var(--signal)" stroke-width="1.5" stroke-dasharray="2 7" stroke-linecap="round" />
 							{peaks.map((p) => (
@@ -257,6 +282,31 @@ const peakDelays = peaks.map((p) => ((p.x - xStart) / (xEnd - xStart)) * drawSec
 						</div>
 					))}
 				</div>
+				<p class="mt-10 max-w-2xl text-sm text-[var(--pine-soft)]">
+					¿La placa no trae MeshCore de fábrica? Flashéala directo desde el navegador con el
+					<a href="https://meshcore.io/flasher" class="underline decoration-[var(--line)] underline-offset-4 hover:text-[var(--ink)]">flasher oficial</a>
+					 — conéctala por USB y elige el firmware según el rol que va a cumplir.
+				</p>
+			</div>
+		</section>
+
+		<!-- Roles -->
+		<section id="roles" class="border-b border-[var(--line)] px-6 py-20">
+			<div class="mx-auto max-w-6xl">
+				<h2 class="font-display text-3xl font-bold text-[var(--ink)] sm:text-4xl">
+					Elige qué rol va a cumplir tu nodo
+				</h2>
+				<p class="mt-4 max-w-2xl text-[var(--pine)]">
+					El firmware de MeshCore no es uno solo — cada nodo cumple un rol distinto en la red.
+				</p>
+				<dl class="mt-10">
+					{roles.map((r) => (
+						<div class="step-row grid gap-1 py-5 sm:grid-cols-[0.6fr_1.4fr] sm:gap-6">
+							<dt class="font-display text-lg font-semibold text-[var(--ink)]">{r.title}</dt>
+							<dd class="text-[var(--pine)]">{r.desc}</dd>
+						</div>
+					))}
+				</dl>
 			</div>
 		</section>
 
@@ -274,6 +324,19 @@ const peakDelays = peaks.map((p) => ((p.x - xStart) / (xEnd - xStart)) * drawSec
 
 				<div class="mt-10 grid gap-10 lg:grid-cols-[1.3fr_1fr]">
 					<ol class="list-none">
+						<li class="step-row flex gap-5 py-5">
+							<span class="font-display shrink-0 text-2xl font-bold text-[var(--signal)]">1</span>
+							<div>
+								<h3 class="font-display text-lg font-semibold text-[var(--ink)]">Instala una app MeshCore</h3>
+								<p class="mt-1 text-[var(--pine)]">
+									La app oficial MeshCore cubre Android e iOS. Si vas a usar tu radio con iPhone,
+									iPad o Mac,
+									<a href="https://meshcoreone.com" class="underline decoration-[var(--line)] underline-offset-4 hover:text-[var(--ink)]">MeshCore One</a>
+									 es un cliente más completo — línea de vista, gestión remota de repetidores y
+									más herramientas de diagnóstico.
+								</p>
+							</div>
+						</li>
 						{configPasos.map((s) => (
 							<li class="step-row flex gap-5 py-5">
 								<span class="font-display shrink-0 text-2xl font-bold text-[var(--signal)]">{s.n}</span>
@@ -296,9 +359,10 @@ const peakDelays = peaks.map((p) => ((p.x - xStart) / (xEnd - xStart)) * drawSec
 							))}
 						</dl>
 						<p class="mt-5 text-xs leading-relaxed text-[var(--pine-soft)]">
-							Valores del preset comunitario USA/Canadá usado en la mayoría de redes MeshCore de
-							Estados Unidos y Puerto Rico. Confírmalos en el selector de la app antes de
-							transmitir — pueden cambiar entre versiones.
+							Subimos la tasa de codificación a 4/8: con tanta sierra de por medio, ese margen
+							extra ayuda a reconstruir un paquete que llega débil o rebotado. Cuesta más tiempo
+							de transmisión, pero en Puerto Rico vale la pena. Confirma los valores en el
+							selector de la app antes de transmitir — pueden cambiar entre versiones.
 						</p>
 					</div>
 				</div>

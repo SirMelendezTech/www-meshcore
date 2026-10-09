@@ -2,17 +2,17 @@
 @import "tailwindcss";
 
 :root {
-	--paper: #ece4d0;
-	--paper-raised: #f6f1e4;
-	--ink: #1e2a22;
-	--pine: #3f5748;
-	--pine-soft: #4f6456;
-	--contour: #c3b795;
-	--line: #b7aa85;
-	--signal: #cc5a1e;
-	--signal-dark: #a8480f;
-	--signal-darker: #7e370c;
-	--vhf: #2b6f86;
+	--paper: #141f18;
+	--paper-raised: #1e2d23;
+	--ink: #ece4d0;
+	--pine: #8fa696;
+	--pine-soft: #88a08f;
+	--contour: #2c3b30;
+	--line: #30402f;
+	--signal: #e8824a;
+	--signal-dark: #e8824a;
+	--signal-darker: #d66f36;
+	--vhf: #5fa3bd;
 
 	--font-display: "Big Shoulders", "Arial Narrow", sans-serif;
 	--font-body: "IBM Plex Sans", system-ui, sans-serif;
@@ -80,7 +80,7 @@ a {
 	justify-content: center;
 	gap: 0.5rem;
 	background-color: var(--signal-dark);
-	color: var(--paper-raised);
+	color: var(--paper);
 	font-family: var(--font-body);
 	font-weight: 600;
 	padding: 0.85rem 1.6rem;
