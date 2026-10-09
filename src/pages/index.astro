@@ -151,9 +151,53 @@ const peakDelays = peaks.map((p) => ((p.x - xStart) / (xEnd - xStart)) * drawSec
 				<a href="#unete" class="nav-link">Únete</a>
 				<a href="#comunidad" class="nav-link">Comunidad</a>
 			</div>
-			<a href="#configura" class="btn-primary px-4! py-2! text-sm">Configura tu radio</a>
+			<a href="#configura" class="btn-primary hidden px-4! py-2! text-sm lg:inline-flex">Configura tu radio</a>
+			<button
+				id="menu-toggle"
+				type="button"
+				class="nav-toggle lg:hidden"
+				aria-expanded="false"
+				aria-controls="mobile-menu"
+			>
+				<span class="sr-only">Abrir menú</span>
+				<svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
+					<path d="M3 6h18M3 12h18M3 18h18" stroke="var(--ink)" stroke-width="2" stroke-linecap="round" />
+				</svg>
+			</button>
 		</nav>
+		<div id="mobile-menu" class="mobile-menu lg:hidden" hidden>
+			<a href="#que-es" class="nav-link">Qué es</a>
+			<a href="#hardware" class="nav-link">Hardware</a>
+			<a href="#roles" class="nav-link">Roles</a>
+			<a href="#configura" class="nav-link">Configura tu radio</a>
+			<a href="#unete" class="nav-link">Únete</a>
+			<a href="#comunidad" class="nav-link">Comunidad</a>
+			<a href="#configura" class="btn-primary justify-center">Configura tu radio</a>
+		</div>
 	</header>
+
+	<script>
+		const toggle = document.getElementById('menu-toggle');
+		const menu = document.getElementById('mobile-menu');
+		if (toggle && menu) {
+			toggle.addEventListener('click', () => {
+				const open = menu.hasAttribute('hidden');
+				if (open) {
+					menu.removeAttribute('hidden');
+					toggle.setAttribute('aria-expanded', 'true');
+				} else {
+					menu.setAttribute('hidden', '');
+					toggle.setAttribute('aria-expanded', 'false');
+				}
+			});
+			menu.querySelectorAll('a').forEach((link) =>
+				link.addEventListener('click', () => {
+					menu.setAttribute('hidden', '');
+					toggle.setAttribute('aria-expanded', 'false');
+				}),
+			);
+		}
+	</script>
 
 	<main id="contenido">
 		<!-- Hero -->
