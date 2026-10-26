@@ -169,7 +169,7 @@ const es = {
 		title: 'Coordinamos repetidores entre todos',
 		body: 'El Discord es donde se comparte el canal vigente, se resuelven dudas de configuración, se discuten ubicaciones de repetidores y se avisan activaciones durante emergencias.',
 		discord: 'Entrar al Discord',
-		reddit: 'Unirte en Reddit',
+		whatsapp: 'Unirte en WhatsApp',
 		sister: 'Ver la red hermana en prmsh.com',
 	},
 	footer: {
@@ -328,7 +328,7 @@ const en: Dictionary = {
 		title: 'We coordinate repeaters together',
 		body: 'Discord is where the current channel is shared, setup questions get answered, repeater locations are discussed and activations are announced during emergencies.',
 		discord: 'Join the Discord',
-		reddit: 'Join on Reddit',
+		whatsapp: 'Join on WhatsApp',
 		sister: 'Visit the sister network at prmsh.com',
 	},
 	footer: {
