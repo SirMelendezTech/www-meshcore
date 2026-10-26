@@ -1,22 +1,28 @@
 ---
 import '../styles/global.css';
+import { defaultLang, homePath, languages, ui, type Lang } from '../i18n/ui';
 
 interface Props {
+	lang?: Lang;
 	title?: string;
 	description?: string;
+	ogLocale?: string;
 }
 
+const { lang = defaultLang } = Astro.props;
 const {
-	title = 'MeshCore Puerto Rico — red mesh LoRa comunitaria',
-	description = 'Mensajes que no dependen de la señal celular. MeshCore Puerto Rico es una red mesh LoRa construida por la comunidad: configura tu radio, únete a la red y mantente comunicado cuando la infraestructura falla.',
+	title = ui[lang].meta.title,
+	description = ui[lang].meta.description,
+	ogLocale = ui[lang].meta.ogLocale,
 } = Astro.props;
+const locales = Object.keys(languages) as Lang[];
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const ogImageURL = new URL('/og.png', Astro.site);
 ---
 
 <!doctype html>
-<html lang="es">
+<html lang={lang}>
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -25,6 +31,10 @@ const ogImageURL = new URL('/og.png', Astro.site);
 		<title>{title}</title>
 		<meta name="description" content={description} />
 		<link rel="canonical" href={canonicalURL} />
+		{locales.map((l) => (
+			<link rel="alternate" hreflang={l} href={new URL(homePath[l], Astro.site)} />
+		))}
+		<link rel="alternate" hreflang="x-default" href={new URL(homePath[defaultLang], Astro.site)} />
 
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="alternate icon" href="/favicon.ico" />
@@ -40,7 +50,10 @@ const ogImageURL = new URL('/og.png', Astro.site);
 		<meta property="og:image" content={ogImageURL} />
 		<meta property="og:image:width" content="1200" />
 		<meta property="og:image:height" content="630" />
-		<meta property="og:locale" content="es_PR" />
+		<meta property="og:locale" content={ogLocale} />
+		{locales.filter((l) => l !== lang).map((l) => (
+			<meta property="og:locale:alternate" content={ui[l].meta.ogLocale} />
+		))}
 
 		<meta name="twitter:card" content="summary_large_image" />
 		<meta name="twitter:title" content={title} />
@@ -54,6 +67,7 @@ const ogImageURL = new URL('/og.png', Astro.site);
 			url: 'https://meshcore.prmsh.com',
 			logo: new URL('/icon-512.png', Astro.site).toString(),
 			description,
+			inLanguage: lang,
 			areaServed: {
 				'@type': 'AdministrativeArea',
 				name: 'Puerto Rico',

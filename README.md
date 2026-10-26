@@ -14,14 +14,28 @@ Publicado en GitHub Pages bajo el dominio `meshcore.prmsh.com`.
 /
 ├── public/              favicon, iconos, og.png, CNAME, robots.txt, sitemap.xml
 ├── src/
+│   ├── components/
+│   │   └── Home.astro     contenido de la página, compartido por todos los idiomas
+│   ├── i18n/
+│   │   └── ui.ts          textos traducidos (es, en)
 │   ├── layouts/
-│   │   └── Layout.astro   SEO (meta, Open Graph, JSON-LD)
+│   │   └── Layout.astro   SEO (meta, Open Graph, hreflang, JSON-LD)
 │   ├── pages/
-│   │   └── index.astro
+│   │   ├── index.astro    español (idioma por defecto, en `/`)
+│   │   └── en/index.astro inglés (en `/en/`)
 │   └── styles/
 │       └── global.css     tokens de diseño y tipografía
 └── .github/workflows/deploy.yml   build + deploy a GitHub Pages
 ```
+
+## Idiomas
+
+El sitio está en español (por defecto, en `/`) e inglés (`/en/`), usando el
+[i18n routing de Astro](https://docs.astro.build/en/guides/internationalization/).
+Todo el texto vive en `src/i18n/ui.ts`; al cambiar un texto, actualízalo en
+ambos idiomas. Para agregar otro idioma: súmalo a `languages` y `homePath` en
+`ui.ts` y a `i18n.locales` en `astro.config.mjs`, crea su página en
+`src/pages/<código>/index.astro` y añádelo a `public/sitemap.xml`.
 
 ## Comandos
 
@@ -41,8 +55,8 @@ de `meshcore.prmsh.com` apunta al Pages de este repo.
 
 ## Pendiente
 
-- Confirmar los valores del preset "USA/Canadá" (`src/pages/index.astro`,
-  sección `configura`) contra el selector de la app MeshCore antes de cada
+- Confirmar los valores del preset "USA/Canadá" (`src/i18n/ui.ts`,
+  `configura.specs` en ambos idiomas) contra el selector de la app MeshCore antes de cada
   release — los presets pueden cambiar de versión a versión.
 - El canal público de Puerto Rico (nombre/clave) se comparte en Discord a
   propósito, no en esta página, para que nunca quede desactualizado.

@@ -1,0 +1,410 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { homePath, languages, ui, type Lang } from '../i18n/ui';
+
+interface Props {
+	lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = ui[lang];
+const otherLang = (Object.keys(languages) as Lang[]).find((l) => l !== lang)!;
+
+const peaks = [
+	{ x: 70, y: 150, label: 'Toro Negro', elev: '≈1,200 m' },
+	{ x: 195, y: 85, label: 'Cerro de Punta', elev: '≈1,338 m' },
+	{ x: 335, y: 115, label: 'Monte Guilarte', elev: '≈1,205 m' },
+	{ x: 475, y: 165, label: 'El Yunque', elev: '≈1,065 m' },
+];
+
+// Three hand-drawn silhouette layers (distant haze, named ridgeline, near
+// foreground) for a layered, naturalistic profile instead of flat triangles.
+// The mid layer's jagged vertices pass through each named peak exactly.
+const backRidge = 'M-10,300 C70,250 150,268 230,248 C310,228 390,256 470,240 C510,232 550,248 570,268 L570,300 Z';
+const midRidge = 'M-10,300 L25,255 L55,272 L70,150 L95,228 L120,198 L150,252 L175,208 L195,85 L222,202 L250,178 L275,242 L300,212 L335,115 L365,232 L395,192 L425,248 L450,222 L475,165 L505,252 L530,232 L570,300 Z';
+const frontRidge = 'M-10,300 C100,268 200,288 300,266 C400,246 480,276 570,258 L570,300 Z';
+
+const hopPath = `M${peaks.map((p) => `${p.x},${p.y}`).join(' L')}`;
+
+// The hop line sweeps left to right on load; each peak's signal pulse
+// fires at the moment that sweep reaches its x position.
+const drawSeconds = 1.8;
+const xStart = peaks[0].x;
+const xEnd = peaks[peaks.length - 1].x;
+const peakDelays = peaks.map((p) => ((p.x - xStart) / (xEnd - xStart)) * drawSeconds);
+---
+
+<Layout lang={lang} title={t.meta.title} description={t.meta.description} ogLocale={t.meta.ogLocale}>
+	<a href="#contenido" class="skip-link">{t.skipLink}</a>
+
+	<header class="sticky top-0 z-50 border-b border-[var(--line)] bg-[var(--paper)]/95 backdrop-blur">
+		<nav class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
+			<a href="#top" class="flex items-center gap-2.5">
+				<svg width="30" height="30" viewBox="0 0 48 48" aria-hidden="true">
+					<path d="M4 36 L16 14 L22 22 L32 8 L44 36 Z" fill="var(--pine)" />
+					<circle cx="32" cy="8" r="2.6" fill="var(--signal)" />
+					<path d="M37.2 4.4 A 8.4 8.4 0 0 1 39.6 11.4" fill="none" stroke="var(--signal)" stroke-width="2" stroke-linecap="round" />
+					<path d="M40.6 1.6 A 13 13 0 0 1 44 12.1" fill="none" stroke="var(--signal)" stroke-width="2" stroke-linecap="round" />
+				</svg>
+				<span class="font-display text-xl font-bold tracking-tight text-[var(--ink)]">
+					MeshCore<span class="text-[var(--signal)]">PR</span>
+				</span>
+			</a>
+			<div class="hidden items-center gap-7 text-[0.95rem] lg:flex">
+				<a href="#que-es" class="nav-link">{t.nav.queEs}</a>
+				<a href="#hardware" class="nav-link">{t.nav.hardware}</a>
+				<a href="#roles" class="nav-link">{t.nav.roles}</a>
+				<a href="#configura" class="nav-link">{t.nav.configura}</a>
+				<a href="#unete" class="nav-link">{t.nav.unete}</a>
+				<a href="#comunidad" class="nav-link">{t.nav.comunidad}</a>
+			</div>
+			<div class="flex items-center gap-4">
+				<a href={homePath[otherLang]} hreflang={otherLang} lang={otherLang} class="lang-switch" aria-label={t.nav.switchLang} title={t.nav.switchLang} data-lang-switch>{otherLang.toUpperCase()}</a>
+				<a href="#configura" class="btn-primary hidden px-4! py-2! text-sm lg:inline-flex">{t.nav.configura}</a>
+				<button
+					id="menu-toggle"
+					type="button"
+					class="nav-toggle lg:hidden"
+					aria-expanded="false"
+					aria-controls="mobile-menu"
+				>
+					<span class="sr-only">{t.nav.openMenu}</span>
+					<svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
+						<path d="M3 6h18M3 12h18M3 18h18" stroke="var(--ink)" stroke-width="2" stroke-linecap="round" />
+					</svg>
+				</button>
+			</div>
+		</nav>
+		<div id="mobile-menu" class="mobile-menu lg:hidden" hidden>
+			<a href="#que-es" class="nav-link">{t.nav.queEs}</a>
+			<a href="#hardware" class="nav-link">{t.nav.hardware}</a>
+			<a href="#roles" class="nav-link">{t.nav.roles}</a>
+			<a href="#configura" class="nav-link">{t.nav.configura}</a>
+			<a href="#unete" class="nav-link">{t.nav.unete}</a>
+			<a href="#comunidad" class="nav-link">{t.nav.comunidad}</a>
+			<a href="#configura" class="btn-primary justify-center">{t.nav.configura}</a>
+		</div>
+	</header>
+
+	<script>
+		const toggle = document.getElementById('menu-toggle');
+		const menu = document.getElementById('mobile-menu');
+		if (toggle && menu) {
+			toggle.addEventListener('click', () => {
+				const open = menu.hasAttribute('hidden');
+				if (open) {
+					menu.removeAttribute('hidden');
+					toggle.setAttribute('aria-expanded', 'true');
+				} else {
+					menu.setAttribute('hidden', '');
+					toggle.setAttribute('aria-expanded', 'false');
+				}
+			});
+			menu.querySelectorAll('a').forEach((link) =>
+				link.addEventListener('click', () => {
+					menu.setAttribute('hidden', '');
+					toggle.setAttribute('aria-expanded', 'false');
+				}),
+			);
+		}
+
+		// Keep the reader on the same section when switching languages; both
+		// locales share the same section ids.
+		document.querySelectorAll<HTMLAnchorElement>('[data-lang-switch]').forEach((link) =>
+			link.addEventListener('click', () => {
+				link.hash = window.location.hash;
+			}),
+		);
+	</script>
+
+	<main id="contenido">
+		<!-- Hero -->
+		<section id="top" class="border-b border-[var(--line)] px-6 pb-16 pt-14 sm:pb-24 sm:pt-20">
+			<div class="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[1.05fr_1fr]">
+				<div>
+					<p class="font-mono text-sm text-[var(--pine)]">{t.hero.eyebrow}</p>
+					<h1 class="font-display mt-3 text-5xl font-bold leading-[0.95] tracking-tight text-[var(--ink)] sm:text-6xl">
+						{t.hero.title}
+					</h1>
+					<p class="mt-6 max-w-lg text-lg leading-relaxed text-[var(--pine)]">
+						{t.hero.lead}
+					</p>
+					<div class="mt-9 flex flex-col gap-3 sm:flex-row">
+						<a href="#configura" class="btn-primary">{t.hero.ctaPrimary}</a>
+						<a href="#que-es" class="btn-secondary">{t.hero.ctaSecondary}</a>
+					</div>
+				</div>
+
+				<figure class="mt-2">
+					<svg viewBox="0 0 560 320" class="w-full" role="img" aria-labelledby="ridge-title">
+						<title id="ridge-title">{t.hero.svgTitle}</title>
+						<defs>
+							<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+								<stop offset="0%" stop-color="var(--paper-raised)" />
+								<stop offset="100%" stop-color="var(--paper)" />
+							</linearGradient>
+							<clipPath id="hop-sweep" clipPathUnits="userSpaceOnUse">
+								<rect class="hop-sweep-mask" x="0" y="0" width="560" height="320" />
+							</clipPath>
+						</defs>
+						<rect x="0" y="0" width="560" height="260" fill="url(#sky)" opacity="0.5" />
+						<path d={backRidge} fill="var(--contour)" opacity="0.55" />
+						<path d={midRidge} fill="var(--paper-raised)" stroke="var(--line)" stroke-width="1.5" stroke-linejoin="round" />
+						<path d={frontRidge} fill="var(--paper)" />
+						<g clip-path="url(#hop-sweep)">
+							<path d={hopPath} fill="none" stroke="var(--signal)" stroke-width="1.5" stroke-dasharray="2 7" stroke-linecap="round" />
+							{peaks.map((p) => (
+								<circle cx={p.x} cy={p.y} r="5" fill="var(--signal)" />
+							))}
+						</g>
+						{peaks.map((p, i) => (
+							<circle
+								class="hop-ping"
+								cx={p.x}
+								cy={p.y}
+								r="5"
+								fill="none"
+								stroke="var(--signal)"
+								stroke-width="1.5"
+								style={`animation-delay: ${peakDelays[i]}s`}
+							/>
+						))}
+						{peaks.map((p, i) => (
+							<text
+								x={p.x}
+								y={p.y - 16}
+								text-anchor="middle"
+								class="hop-label font-mono"
+								font-size="11"
+								fill="var(--pine)"
+								style={`animation-delay: ${peakDelays[i]}s`}
+							>
+								{p.label}
+							</text>
+						))}
+					</svg>
+					<figcaption class="mt-3 font-mono text-xs text-[var(--pine-soft)]">
+						{t.hero.caption}
+					</figcaption>
+				</figure>
+			</div>
+		</section>
+
+		<!-- Qué es -->
+		<section id="que-es" class="border-b border-[var(--line)] px-6 py-20">
+			<div class="mx-auto max-w-6xl">
+				<div class="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
+					<div>
+						<h2 class="font-display text-3xl font-bold text-[var(--ink)] sm:text-4xl">
+							{t.queEs.title}
+						</h2>
+						<p class="mt-4 max-w-md text-[var(--pine)]">{t.queEs.p1}</p>
+						<p class="mt-4 max-w-md text-[var(--pine)]" set:html={t.queEs.p2Html} />
+					</div>
+					<dl>
+						{t.queEs.rasgos.map((f) => (
+							<div class="step-row grid gap-1 py-5 sm:grid-cols-[1fr_1.6fr] sm:gap-6">
+								<dt class="font-display text-lg font-semibold text-[var(--ink)]">{f.title}</dt>
+								<dd class="text-[var(--pine)]">{f.desc}</dd>
+							</div>
+						))}
+					</dl>
+				</div>
+			</div>
+		</section>
+
+		<!-- Hardware -->
+		<section id="hardware" class="border-b border-[var(--line)] px-6 py-20">
+			<div class="mx-auto max-w-6xl">
+				<h2 class="font-display text-3xl font-bold text-[var(--ink)] sm:text-4xl">
+					{t.hardware.title}
+				</h2>
+				<p class="mt-4 max-w-2xl text-[var(--pine)]" set:html={t.hardware.introHtml} />
+				<div class="mt-10 grid gap-x-8 gap-y-6 sm:grid-cols-2">
+					{t.hardware.items.map((h) => (
+						<div class="border-l-2 border-[var(--pine)] py-1 pl-5">
+							<h3 class="font-display text-lg font-semibold text-[var(--ink)]">{h.nombre}</h3>
+							<p class="mt-1 text-sm text-[var(--pine)]">{h.nota}</p>
+						</div>
+					))}
+				</div>
+				<p class="mt-10 max-w-2xl text-sm text-[var(--pine-soft)]" set:html={t.hardware.flasherHtml} />
+			</div>
+		</section>
+
+		<!-- Roles -->
+		<section id="roles" class="border-b border-[var(--line)] px-6 py-20">
+			<div class="mx-auto max-w-6xl">
+				<h2 class="font-display text-3xl font-bold text-[var(--ink)] sm:text-4xl">
+					{t.roles.title}
+				</h2>
+				<p class="mt-4 max-w-2xl text-[var(--pine)]">{t.roles.intro}</p>
+				<dl class="mt-10">
+					{t.roles.items.map((r) => (
+						<div class="step-row grid gap-1 py-5 sm:grid-cols-[0.6fr_1.4fr] sm:gap-6">
+							<dt class="font-display text-lg font-semibold text-[var(--ink)]">{r.title}</dt>
+							<dd class="text-[var(--pine)]">{r.desc}</dd>
+						</div>
+					))}
+				</dl>
+			</div>
+		</section>
+
+		<!-- Configura tu radio -->
+		<section id="configura" class="border-b border-[var(--line)] px-6 py-20">
+			<div class="mx-auto max-w-6xl">
+				<h2 class="font-display text-3xl font-bold text-[var(--ink)] sm:text-4xl">
+					{t.configura.title}
+				</h2>
+				<p class="mt-4 max-w-2xl text-[var(--pine)]" set:html={t.configura.introHtml} />
+
+				<div class="mt-10 grid gap-10 lg:grid-cols-[1.3fr_1fr]">
+					<ol class="list-none">
+						{t.configura.pasos.map((s, i) => (
+							<li class="step-row flex gap-5 py-5">
+								<span class="font-display shrink-0 text-2xl font-bold text-[var(--signal)]">{i + 1}</span>
+								<div>
+									<h3 class="font-display text-lg font-semibold text-[var(--ink)]">{s.title}</h3>
+									<p class="mt-1 text-[var(--pine)]" set:html={s.descHtml} />
+								</div>
+							</li>
+						))}
+					</ol>
+
+					<div class="spec-plate p-6">
+						<p class="font-mono text-xs uppercase tracking-wide text-[var(--pine-soft)]">{t.configura.presetLabel}</p>
+						<dl class="mt-4 space-y-3">
+							{t.configura.specs.map((s) => (
+								<div class="flex items-baseline justify-between gap-4 border-t border-[var(--line)] pt-3 first:border-0 first:pt-0">
+									<dt class="text-sm">{s.k}</dt>
+									<dd class="text-right text-sm">{s.v}</dd>
+								</div>
+							))}
+						</dl>
+						<p class="mt-5 text-xs leading-relaxed text-[var(--pine-soft)]">
+							{t.configura.presetNote}
+						</p>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Únete -->
+		<section id="unete" class="border-b border-[var(--line)] px-6 py-20">
+			<div class="mx-auto max-w-6xl">
+				<h2 class="font-display text-3xl font-bold text-[var(--ink)] sm:text-4xl">
+					{t.unete.title}
+				</h2>
+				<p class="mt-4 max-w-2xl text-[var(--pine)]">{t.unete.intro}</p>
+				<ol class="mt-10 grid list-none gap-x-10 gap-y-8 sm:grid-cols-2">
+					{t.unete.pasos.map((s, i) => (
+						<li class="flex gap-5">
+							<span class="font-display shrink-0 text-2xl font-bold text-[var(--pine)]">{i + 1}</span>
+							<div>
+								<h3 class="font-display text-lg font-semibold text-[var(--ink)]">{s.title}</h3>
+								<p class="mt-1 text-[var(--pine)]">{s.desc}</p>
+							</div>
+						</li>
+					))}
+				</ol>
+			</div>
+		</section>
+
+		<!-- Comunidad -->
+		<section id="comunidad" class="px-6 py-20">
+			<div class="mx-auto max-w-6xl">
+				<div class="spec-plate flex flex-col gap-8 p-8 sm:p-10 lg:flex-row lg:items-center lg:justify-between">
+					<div class="max-w-lg">
+						<h2 class="font-display text-3xl font-bold text-[var(--ink)] sm:text-4xl">
+							{t.comunidad.title}
+						</h2>
+						<p class="mt-4 text-[var(--pine)]">{t.comunidad.body}</p>
+					</div>
+					<div class="flex shrink-0 flex-col gap-3 sm:flex-row lg:flex-col">
+						<a href="https://discord.gg/3v6rRhNRpD" class="btn-primary" rel="noopener">{t.comunidad.discord}</a>
+						<a href="https://www.reddit.com/r/meshcore/" class="btn-secondary" rel="noopener">{t.comunidad.reddit}</a>
+						<a href="https://prmsh.com" class="btn-secondary" rel="noopener">{t.comunidad.sister}</a>
+					</div>
+				</div>
+			</div>
+		</section>
+	</main>
+
+	<footer class="border-t border-[var(--line)] px-6 py-10">
+		<div class="mx-auto flex max-w-6xl flex-col gap-4 text-sm text-[var(--pine-soft)] sm:flex-row sm:items-center sm:justify-between">
+			<p>{t.footer.note}</p>
+			<div class="flex gap-5">
+				<a href="https://discord.gg/3v6rRhNRpD" class="hover:text-[var(--ink)]">Discord</a>
+				<a href="https://www.reddit.com/r/meshcore/" class="hover:text-[var(--ink)]" rel="noopener">Reddit</a>
+				<a href="https://prmsh.com" class="hover:text-[var(--ink)]">PRMSH</a>
+				<a href="https://github.com/SirMelendezTech/www-meshcore" class="hover:text-[var(--ink)]">GitHub</a>
+			</div>
+		</div>
+	</footer>
+</Layout>
+
+<style>
+	.skip-link {
+		position: absolute;
+		left: -9999px;
+		top: 0;
+		z-index: 100;
+		background: var(--signal);
+		color: var(--paper-raised);
+		padding: 0.75rem 1.25rem;
+		font-weight: 600;
+	}
+	.skip-link:focus {
+		left: 1rem;
+		top: 1rem;
+	}
+
+	.hop-sweep-mask {
+		transform-box: fill-box;
+		transform-origin: 0% 50%;
+		animation: sweep 1.8s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+	}
+
+	.hop-ping {
+		transform-box: fill-box;
+		transform-origin: 50% 50%;
+		opacity: 0;
+		animation: ping 0.8s ease-out forwards;
+	}
+
+	.hop-label {
+		opacity: 0;
+		animation: label-in 0.5s ease-out forwards;
+	}
+
+	@keyframes sweep {
+		from {
+			transform: scaleX(0);
+		}
+		to {
+			transform: scaleX(1);
+		}
+	}
+
+	@keyframes ping {
+		0% {
+			transform: scale(1);
+			opacity: 0.6;
+		}
+		100% {
+			transform: scale(2.6);
+			opacity: 0;
+		}
+	}
+
+	@keyframes label-in {
+		from {
+			opacity: 0;
+			transform: translateY(3px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+</style>
