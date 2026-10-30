@@ -7,6 +7,8 @@ interface Props {
 	title?: string;
 	description?: string;
 	ogLocale?: string;
+	// This page's path in every locale, for hreflang alternates.
+	alternates?: Record<Lang, string>;
 }
 
 const { lang = defaultLang } = Astro.props;
@@ -14,6 +16,7 @@ const {
 	title = ui[lang].meta.title,
 	description = ui[lang].meta.description,
 	ogLocale = ui[lang].meta.ogLocale,
+	alternates = homePath,
 } = Astro.props;
 const locales = Object.keys(languages) as Lang[];
 
@@ -32,9 +35,9 @@ const ogImageURL = new URL('/og.png', Astro.site);
 		<meta name="description" content={description} />
 		<link rel="canonical" href={canonicalURL} />
 		{locales.map((l) => (
-			<link rel="alternate" hreflang={l} href={new URL(homePath[l], Astro.site)} />
+			<link rel="alternate" hreflang={l} href={new URL(alternates[l], Astro.site)} />
 		))}
-		<link rel="alternate" hreflang="x-default" href={new URL(homePath[defaultLang], Astro.site)} />
+		<link rel="alternate" hreflang="x-default" href={new URL(alternates[defaultLang], Astro.site)} />
 
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="alternate icon" href="/favicon.ico" />

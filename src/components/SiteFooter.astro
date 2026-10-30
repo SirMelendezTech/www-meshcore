@@ -1,0 +1,21 @@
+---
+import { ui, type Lang } from '../i18n/ui';
+
+interface Props {
+	lang: Lang;
+}
+
+const t = ui[Astro.props.lang];
+---
+
+<footer class="border-t border-[var(--line)] px-6 py-10">
+	<div class="mx-auto flex max-w-6xl flex-col gap-4 text-sm text-[var(--pine-soft)] sm:flex-row sm:items-center sm:justify-between">
+		<p>{t.footer.note}</p>
+		<div class="flex gap-5">
+			<a href="https://discord.gg/3v6rRhNRpD" class="hover:text-[var(--ink)]">Discord</a>
+			<a href="https://chat.whatsapp.com/HwCszML0lrv7Ld2N3Tc6QT" class="hover:text-[var(--ink)]" rel="noopener">WhatsApp</a>
+			<a href="https://prmsh.com" class="hover:text-[var(--ink)]">PRMSH</a>
+			<a href="https://github.com/SirMelendezTech/www-meshcore" class="hover:text-[var(--ink)]">GitHub</a>
+		</div>
+	</div>
+</footer>
