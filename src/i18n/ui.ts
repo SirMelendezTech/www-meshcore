@@ -14,10 +14,17 @@ export const homePath: Record<Lang, string> = {
 	en: '/en/',
 };
 
+// MeshCore vs Meshtastic comparison page for each locale.
+export const protocolsPath: Record<Lang, string> = {
+	es: '/protocolos/',
+	en: '/en/protocols/',
+};
+
 // Inline links live inside translated strings rendered with set:html, so the
 // shared link styling is kept here.
 const link = (href: string, text: string) =>
 	`<a href="${href}" class="underline decoration-[var(--line)] underline-offset-4 hover:text-[var(--ink)]">${text}</a>`;
+export const linkHtml = link;
 const strong = (text: string) => `<strong class="text-[var(--ink)]">${text}</strong>`;
 
 const es = {
@@ -32,6 +39,7 @@ const es = {
 		queEs: 'Qué es',
 		hardware: 'Hardware',
 		roles: 'Roles',
+		protocolos: 'MeshCore vs Meshtastic',
 		configura: 'Configura tu radio',
 		unete: 'Únete',
 		comunidad: 'Comunidad',
@@ -51,6 +59,7 @@ const es = {
 		title: 'Radios que se cubren los unos a los otros',
 		p1: 'MeshCore es un protocolo y firmware de código abierto para redes mesh sobre LoRa. Cada nodo recibe y retransmite mensajes a los demás dentro de su alcance, extendiendo la cobertura sin depender de infraestructura centralizada.',
 		p2Html: `Este proyecto es hermano de ${link('https://prmsh.com', 'PRMSH (prmsh.com)')}, la red Meshtastic de la isla. Comparten comunidad y Discord; el protocolo de radio es distinto.`,
+		compareHtml: `¿Cuál te conviene? ${link('/protocolos/', 'Compara MeshCore y Meshtastic')}.`,
 		rasgos: [
 			{
 				title: 'Resiliente ante huracanes',
@@ -191,6 +200,7 @@ const en: Dictionary = {
 		queEs: 'What it is',
 		hardware: 'Hardware',
 		roles: 'Roles',
+		protocolos: 'MeshCore vs Meshtastic',
 		configura: 'Set up your radio',
 		unete: 'Join',
 		comunidad: 'Community',
@@ -210,6 +220,7 @@ const en: Dictionary = {
 		title: 'Radios that look out for each other',
 		p1: 'MeshCore is an open-source protocol and firmware for LoRa mesh networks. Each node receives messages and relays them to the others within range, extending coverage without relying on centralized infrastructure.',
 		p2Html: `This project is a sibling of ${link('https://prmsh.com', 'PRMSH (prmsh.com)')}, the island's Meshtastic network. They share a community and a Discord; the radio protocol is different.`,
+		compareHtml: `Which one fits you? ${link('/en/protocols/', 'Compare MeshCore and Meshtastic')}.`,
 		rasgos: [
 			{
 				title: 'Hurricane-resilient',

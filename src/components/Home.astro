@@ -1,5 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import SiteFooter from './SiteFooter.astro';
+import SiteHeader from './SiteHeader.astro';
 import { homePath, languages, ui, type Lang } from '../i18n/ui';
 
 interface Props {
@@ -35,87 +37,7 @@ const peakDelays = peaks.map((p) => ((p.x - xStart) / (xEnd - xStart)) * drawSec
 ---
 
 <Layout lang={lang} title={t.meta.title} description={t.meta.description} ogLocale={t.meta.ogLocale}>
-	<a href="#contenido" class="skip-link">{t.skipLink}</a>
-
-	<header class="sticky top-0 z-50 border-b border-[var(--line)] bg-[var(--paper)]/95 backdrop-blur">
-		<nav class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
-			<a href="#top" class="flex items-center gap-2.5">
-				<svg width="30" height="30" viewBox="0 0 48 48" aria-hidden="true">
-					<path d="M4 36 L16 14 L22 22 L32 8 L44 36 Z" fill="var(--pine)" />
-					<circle cx="32" cy="8" r="2.6" fill="var(--signal)" />
-					<path d="M37.2 4.4 A 8.4 8.4 0 0 1 39.6 11.4" fill="none" stroke="var(--signal)" stroke-width="2" stroke-linecap="round" />
-					<path d="M40.6 1.6 A 13 13 0 0 1 44 12.1" fill="none" stroke="var(--signal)" stroke-width="2" stroke-linecap="round" />
-				</svg>
-				<span class="font-display text-xl font-bold tracking-tight text-[var(--ink)]">
-					MeshCore<span class="text-[var(--signal)]">PR</span>
-				</span>
-			</a>
-			<div class="hidden items-center gap-7 text-[0.95rem] lg:flex">
-				<a href="#que-es" class="nav-link">{t.nav.queEs}</a>
-				<a href="#hardware" class="nav-link">{t.nav.hardware}</a>
-				<a href="#roles" class="nav-link">{t.nav.roles}</a>
-				<a href="#configura" class="nav-link">{t.nav.configura}</a>
-				<a href="#unete" class="nav-link">{t.nav.unete}</a>
-				<a href="#comunidad" class="nav-link">{t.nav.comunidad}</a>
-			</div>
-			<div class="flex items-center gap-4">
-				<a href={homePath[otherLang]} hreflang={otherLang} lang={otherLang} class="lang-switch" aria-label={t.nav.switchLang} title={t.nav.switchLang} data-lang-switch>{otherLang.toUpperCase()}</a>
-				<a href="#configura" class="btn-primary hidden px-4! py-2! text-sm lg:inline-flex">{t.nav.configura}</a>
-				<button
-					id="menu-toggle"
-					type="button"
-					class="nav-toggle lg:hidden"
-					aria-expanded="false"
-					aria-controls="mobile-menu"
-				>
-					<span class="sr-only">{t.nav.openMenu}</span>
-					<svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
-						<path d="M3 6h18M3 12h18M3 18h18" stroke="var(--ink)" stroke-width="2" stroke-linecap="round" />
-					</svg>
-				</button>
-			</div>
-		</nav>
-		<div id="mobile-menu" class="mobile-menu lg:hidden" hidden>
-			<a href="#que-es" class="nav-link">{t.nav.queEs}</a>
-			<a href="#hardware" class="nav-link">{t.nav.hardware}</a>
-			<a href="#roles" class="nav-link">{t.nav.roles}</a>
-			<a href="#configura" class="nav-link">{t.nav.configura}</a>
-			<a href="#unete" class="nav-link">{t.nav.unete}</a>
-			<a href="#comunidad" class="nav-link">{t.nav.comunidad}</a>
-			<a href="#configura" class="btn-primary justify-center">{t.nav.configura}</a>
-		</div>
-	</header>
-
-	<script>
-		const toggle = document.getElementById('menu-toggle');
-		const menu = document.getElementById('mobile-menu');
-		if (toggle && menu) {
-			toggle.addEventListener('click', () => {
-				const open = menu.hasAttribute('hidden');
-				if (open) {
-					menu.removeAttribute('hidden');
-					toggle.setAttribute('aria-expanded', 'true');
-				} else {
-					menu.setAttribute('hidden', '');
-					toggle.setAttribute('aria-expanded', 'false');
-				}
-			});
-			menu.querySelectorAll('a').forEach((link) =>
-				link.addEventListener('click', () => {
-					menu.setAttribute('hidden', '');
-					toggle.setAttribute('aria-expanded', 'false');
-				}),
-			);
-		}
-
-		// Keep the reader on the same section when switching languages; both
-		// locales share the same section ids.
-		document.querySelectorAll<HTMLAnchorElement>('[data-lang-switch]').forEach((link) =>
-			link.addEventListener('click', () => {
-				link.hash = window.location.hash;
-			}),
-		);
-	</script>
+	<SiteHeader lang={lang} base="" altHref={homePath[otherLang]} />
 
 	<main id="contenido">
 		<!-- Hero -->
@@ -200,6 +122,7 @@ const peakDelays = peaks.map((p) => ((p.x - xStart) / (xEnd - xStart)) * drawSec
 						</h2>
 						<p class="mt-4 max-w-md text-[var(--pine)]">{t.queEs.p1}</p>
 						<p class="mt-4 max-w-md text-[var(--pine)]" set:html={t.queEs.p2Html} />
+						<p class="mt-4 max-w-md text-[var(--pine)]" set:html={t.queEs.compareHtml} />
 					</div>
 					<dl>
 						{t.queEs.rasgos.map((f) => (
@@ -330,35 +253,10 @@ const peakDelays = peaks.map((p) => ((p.x - xStart) / (xEnd - xStart)) * drawSec
 		</section>
 	</main>
 
-	<footer class="border-t border-[var(--line)] px-6 py-10">
-		<div class="mx-auto flex max-w-6xl flex-col gap-4 text-sm text-[var(--pine-soft)] sm:flex-row sm:items-center sm:justify-between">
-			<p>{t.footer.note}</p>
-			<div class="flex gap-5">
-				<a href="https://discord.gg/3v6rRhNRpD" class="hover:text-[var(--ink)]">Discord</a>
-				<a href="https://chat.whatsapp.com/HwCszML0lrv7Ld2N3Tc6QT" class="hover:text-[var(--ink)]" rel="noopener">WhatsApp</a>
-				<a href="https://prmsh.com" class="hover:text-[var(--ink)]">PRMSH</a>
-				<a href="https://github.com/SirMelendezTech/www-meshcore" class="hover:text-[var(--ink)]">GitHub</a>
-			</div>
-		</div>
-	</footer>
+	<SiteFooter lang={lang} />
 </Layout>
 
 <style>
-	.skip-link {
-		position: absolute;
-		left: -9999px;
-		top: 0;
-		z-index: 100;
-		background: var(--signal);
-		color: var(--paper-raised);
-		padding: 0.75rem 1.25rem;
-		font-weight: 600;
-	}
-	.skip-link:focus {
-		left: 1rem;
-		top: 1rem;
-	}
-
 	.hop-sweep-mask {
 		transform-box: fill-box;
 		transform-origin: 0% 50%;
