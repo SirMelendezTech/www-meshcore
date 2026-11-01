@@ -1,0 +1,31 @@
+---
+import Radar from './svelte-bits/Radar.svelte';
+---
+
+<!-- Decorative radar sweep behind the community plate; parent needs `relative overflow-hidden`. -->
+<div
+	class="radar-backdrop pointer-events-none absolute inset-y-0 -right-40 hidden w-[36rem] sm:block"
+	aria-hidden="true"
+>
+	<Radar
+		client:visible
+		color="#e8824a"
+		speed={0.35}
+		sweepSpeed={1.2}
+		scale={0.55}
+		ringCount={7}
+		spokeCount={8}
+		ringThickness={0.04}
+		spokeThickness={0.006}
+		falloff={1.4}
+		brightness={0.9}
+		enableMouseInteraction={false}
+	/>
+</div>
+
+<style>
+	.radar-backdrop {
+		opacity: 0.45;
+		mask-image: linear-gradient(to left, black 40%, transparent 85%);
+	}
+</style>

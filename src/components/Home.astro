@@ -1,6 +1,8 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import SiteFooter from './SiteFooter.astro';
+import DotFieldBackdrop from './DotFieldBackdrop.astro';
+import RadarBackdrop from './RadarBackdrop.astro';
 import SiteHeader from './SiteHeader.astro';
 import { homePath, languages, ui, type Lang } from '../i18n/ui';
 
@@ -156,8 +158,9 @@ const peakDelays = peaks.map((p) => ((p.x - xStart) / (xEnd - xStart)) * drawSec
 		</section>
 
 		<!-- Roles -->
-		<section id="roles" class="border-b border-[var(--line)] px-6 py-20">
-			<div class="mx-auto max-w-6xl">
+		<section id="roles" class="relative overflow-hidden border-b border-[var(--line)] px-6 py-20">
+			<DotFieldBackdrop />
+			<div class="relative mx-auto max-w-6xl">
 				<h2 class="font-display text-3xl font-bold text-[var(--ink)] sm:text-4xl">
 					{t.roles.title}
 				</h2>
@@ -236,7 +239,8 @@ const peakDelays = peaks.map((p) => ((p.x - xStart) / (xEnd - xStart)) * drawSec
 		<!-- Comunidad -->
 		<section id="comunidad" class="px-6 py-20">
 			<div class="mx-auto max-w-6xl">
-				<div class="spec-plate flex flex-col gap-8 p-8 sm:p-10 lg:flex-row lg:items-center lg:justify-between">
+				<div class="spec-plate radar-plate relative flex flex-col gap-8 overflow-hidden p-8 sm:p-10 lg:flex-row lg:items-center lg:justify-between">
+					<RadarBackdrop />
 					<div class="max-w-lg">
 						<h2 class="font-display text-3xl font-bold text-[var(--ink)] sm:text-4xl">
 							{t.comunidad.title}
