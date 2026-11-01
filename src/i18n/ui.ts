@@ -183,6 +183,7 @@ const es = {
 	},
 	footer: {
 		note: 'MeshCore Puerto Rico — proyecto comunitario, código abierto. No es un servicio de emergencia; para 911, llama al 911.',
+		disclaimer: 'Sitio comunitario independiente. No está afiliado ni respaldado por MeshCore Technologies Ltd ni por los desarrolladores de MeshCore. MeshCore y su logo son marcas de sus respectivos dueños.',
 	},
 };
 
@@ -344,6 +345,7 @@ const en: Dictionary = {
 	},
 	footer: {
 		note: 'MeshCore Puerto Rico — community project, open source. Not an emergency service; for emergencies, call 911.',
+		disclaimer: 'Independent community site. Not affiliated with or endorsed by MeshCore Technologies Ltd or the MeshCore developers. MeshCore and its logo are trademarks of their respective owners.',
 	},
 };
 
