@@ -175,6 +175,16 @@
 		border: 1px solid var(--pine);
 	}
 
+	/* Community plate with the radar backdrop: keep content above the canvas
+	   and give outline buttons a solid fill so the sweep stays behind them. */
+	.radar-plate > :not(.radar-backdrop) {
+		position: relative;
+	}
+
+	.radar-plate .btn-secondary:not(:hover) {
+		background-color: var(--paper-raised);
+	}
+
 	.spec-plate dt {
 		font-family: var(--font-body);
 		color: var(--pine);

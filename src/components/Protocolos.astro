@@ -1,6 +1,8 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import SiteFooter from './SiteFooter.astro';
+import LineWavesPanel from './LineWavesPanel.astro';
+import RadarBackdrop from './RadarBackdrop.astro';
 import SiteHeader from './SiteHeader.astro';
 import { homePath, languages, protocolsPath, ui, type Lang } from '../i18n/ui';
 import { protocolos } from '../i18n/protocolos';
@@ -113,7 +115,10 @@ const pairs = [
 		<!-- Alcance -->
 		<section id="alcance" class="border-b border-[var(--line)] px-6 py-20">
 			<div class="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[0.8fr_1.2fr]">
-				<h2 class="font-display text-3xl font-bold text-[var(--ink)] sm:text-4xl">{t.alcance.title}</h2>
+				<div>
+					<h2 class="font-display text-3xl font-bold text-[var(--ink)] sm:text-4xl">{t.alcance.title}</h2>
+					<LineWavesPanel />
+				</div>
 				<div class="space-y-4 text-[var(--pine)]">
 					{t.alcance.paragraphs.map((p) => <p>{p}</p>)}
 				</div>
@@ -191,7 +196,8 @@ const pairs = [
 		<!-- CTA -->
 		<section id="comunidad" class="px-6 py-20">
 			<div class="mx-auto max-w-6xl">
-				<div class="spec-plate flex flex-col gap-8 p-8 sm:p-10 lg:flex-row lg:items-center lg:justify-between">
+				<div class="spec-plate radar-plate relative flex flex-col gap-8 overflow-hidden p-8 sm:p-10 lg:flex-row lg:items-center lg:justify-between">
+					<RadarBackdrop />
 					<div class="max-w-lg">
 						<h2 class="font-display text-3xl font-bold text-[var(--ink)] sm:text-4xl">{t.cta.title}</h2>
 						<p class="mt-4 text-[var(--pine)]">{t.cta.body}</p>

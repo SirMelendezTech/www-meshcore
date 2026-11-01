@@ -3,9 +3,12 @@ import { defineConfig } from 'astro/config';
 
 import tailwindcss from '@tailwindcss/vite';
 
+import svelte from '@astrojs/svelte';
+
 // https://astro.build/config
 export default defineConfig({
   site: 'https://meshcore.prmsh.com',
+
   i18n: {
     locales: ['es', 'en'],
     defaultLocale: 'es',
@@ -13,7 +16,10 @@ export default defineConfig({
       prefixDefaultLocale: false,
     },
   },
+
   vite: {
     plugins: [tailwindcss()]
-  }
+  },
+
+  integrations: [svelte()]
 });
