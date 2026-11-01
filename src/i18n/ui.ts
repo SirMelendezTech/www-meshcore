@@ -23,7 +23,7 @@ export const protocolsPath: Record<Lang, string> = {
 // Inline links live inside translated strings rendered with set:html, so the
 // shared link styling is kept here.
 const link = (href: string, text: string) =>
-	`<a href="${href}" class="underline decoration-[var(--line)] underline-offset-4 hover:text-[var(--ink)]">${text}</a>`;
+	`<a href="${href}" class="underline decoration-[var(--pine)] underline-offset-4 hover:text-[var(--ink)]">${text}</a>`;
 export const linkHtml = link;
 const strong = (text: string) => `<strong class="text-[var(--ink)]">${text}</strong>`;
 

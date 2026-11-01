@@ -10,7 +10,6 @@
 	--contour: #2c3b30;
 	--line: #30402f;
 	--signal: #e8824a;
-	--signal-dark: #e8824a;
 	--signal-darker: #d66f36;
 	--vhf: #5fa3bd;
 
@@ -82,12 +81,12 @@
 		align-items: center;
 		justify-content: center;
 		gap: 0.5rem;
-		background-color: var(--signal-dark);
+		background-color: var(--signal);
 		color: var(--paper);
 		font-family: var(--font-body);
 		font-weight: 600;
 		padding: 0.85rem 1.6rem;
-		border: 1px solid var(--signal-dark);
+		border: 1px solid var(--signal);
 		transition: background-color 150ms ease;
 	}
 
@@ -121,14 +120,24 @@
 		text-decoration: none;
 	}
 
-	.nav-link:hover {
+	.nav-link:hover,
+	.nav-link[aria-current="page"] {
 		color: var(--ink);
+	}
+
+	.nav-link[aria-current="page"] {
+		text-decoration: underline;
+		text-decoration-color: var(--signal);
+		text-decoration-thickness: 2px;
+		text-underline-offset: 0.45em;
 	}
 
 	.nav-toggle {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
+		min-width: 2.75rem;
+		min-height: 2.75rem;
 		padding: 0.4rem;
 		background: transparent;
 		border: 1px solid var(--line);
@@ -201,6 +210,11 @@
 		font-family: var(--font-mono);
 		font-size: 0.8rem;
 		text-decoration: none;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-width: 2.75rem;
+		min-height: 2.75rem;
 		border: 1px solid var(--line);
 		padding: 0.35rem 0.6rem;
 		transition: color 150ms ease, border-color 150ms ease;

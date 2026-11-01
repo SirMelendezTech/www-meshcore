@@ -247,7 +247,7 @@ const peakDelays = peaks.map((p) => ((p.x - xStart) / (xEnd - xStart)) * drawSec
 						</h2>
 						<p class="mt-4 text-[var(--pine)]">{t.comunidad.body}</p>
 					</div>
-					<div class="flex shrink-0 flex-col gap-3 sm:flex-row lg:flex-col">
+					<div class="flex shrink-0 flex-col gap-3 sm:flex-row sm:flex-wrap lg:flex-col lg:flex-nowrap [&>a]:whitespace-nowrap">
 						<a href="https://discord.gg/3v6rRhNRpD" class="btn-primary" rel="noopener">{t.comunidad.discord}</a>
 						<a href="https://chat.whatsapp.com/HwCszML0lrv7Ld2N3Tc6QT" class="btn-secondary" rel="noopener">{t.comunidad.whatsapp}</a>
 						<a href="https://prmsh.com" class="btn-secondary" rel="noopener">{t.comunidad.sister}</a>
