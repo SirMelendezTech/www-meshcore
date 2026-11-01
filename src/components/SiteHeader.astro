@@ -15,15 +15,19 @@ const { lang, base, altHref, ctaHref = `${base}#configura` } = Astro.props;
 const t = ui[lang];
 const otherLang = (Object.keys(languages) as Lang[]).find((l) => l !== lang)!;
 
+// "Configura" is left out on purpose: the CTA button beside the nav (and at
+// the end of the mobile menu) already links there.
 const links = [
 	{ href: `${base}#que-es`, label: t.nav.queEs },
 	{ href: `${base}#hardware`, label: t.nav.hardware },
 	{ href: `${base}#roles`, label: t.nav.roles },
 	{ href: protocolsPath[lang], label: t.nav.protocolos },
-	{ href: `${base}#configura`, label: t.nav.configura },
 	{ href: `${base}#unete`, label: t.nav.unete },
 	{ href: `${base}#comunidad`, label: t.nav.comunidad },
 ];
+
+const currentPath = Astro.url.pathname.replace(/\/?$/, '/');
+const isCurrent = (href: string) => !href.includes('#') && href.replace(/\/?$/, '/') === currentPath;
 ---
 
 <a href="#contenido" class="skip-link">{t.skipLink}</a>
@@ -42,10 +46,10 @@ const links = [
 			</span>
 		</a>
 		<div class="hidden items-center gap-7 text-[0.95rem] lg:flex">
-			{links.map((l) => <a href={l.href} class="nav-link">{l.label}</a>)}
+			{links.map((l) => <a href={l.href} class="nav-link" aria-current={isCurrent(l.href) ? 'page' : undefined}>{l.label}</a>)}
 		</div>
 		<div class="flex items-center gap-4">
-			<a href={altHref} hreflang={otherLang} lang={otherLang} class="lang-switch" aria-label={t.nav.switchLang} title={t.nav.switchLang} data-lang-switch>{otherLang.toUpperCase()}</a>
+			<a href={altHref} hreflang={otherLang} lang={otherLang} class="lang-switch" title={t.nav.switchLang} data-lang-switch>{otherLang.toUpperCase()}<span class="sr-only">, {t.nav.switchLang}</span></a>
 			<a href={ctaHref} class="btn-primary hidden px-4! py-2! text-sm lg:inline-flex">{t.nav.configura}</a>
 			<button
 				id="menu-toggle"
@@ -62,7 +66,7 @@ const links = [
 		</div>
 	</nav>
 	<div id="mobile-menu" class="mobile-menu lg:hidden" hidden>
-		{links.map((l) => <a href={l.href} class="nav-link">{l.label}</a>)}
+		{links.map((l) => <a href={l.href} class="nav-link" aria-current={isCurrent(l.href) ? 'page' : undefined}>{l.label}</a>)}
 		<a href={ctaHref} class="btn-primary justify-center">{t.nav.configura}</a>
 	</div>
 </header>
@@ -79,6 +83,13 @@ const links = [
 			} else {
 				menu.setAttribute('hidden', '');
 				toggle.setAttribute('aria-expanded', 'false');
+			}
+		});
+		document.addEventListener('keydown', (e) => {
+			if (e.key === 'Escape' && !menu.hasAttribute('hidden')) {
+				menu.setAttribute('hidden', '');
+				toggle.setAttribute('aria-expanded', 'false');
+				toggle.focus();
 			}
 		});
 		menu.querySelectorAll('a').forEach((link) =>

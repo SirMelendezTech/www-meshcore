@@ -2,9 +2,10 @@
 import Radar from './svelte-bits/Radar.svelte';
 ---
 
-<!-- Decorative radar sweep behind the community plate; parent needs `relative overflow-hidden`. -->
+<!-- Decorative radar sweep behind the community plate; parent needs `relative overflow-hidden`.
+     Large screens only: below lg the plate stacks and the sweep would run behind body text. -->
 <div
-	class="radar-backdrop pointer-events-none absolute inset-y-0 -right-40 hidden w-[36rem] sm:block"
+	class="radar-backdrop pointer-events-none absolute inset-y-0 -right-40 hidden w-[36rem] lg:block"
 	aria-hidden="true"
 >
 	<Radar
