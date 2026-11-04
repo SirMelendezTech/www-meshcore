@@ -35,11 +35,14 @@ const isCurrent = (href: string) => !href.includes('#') && href.replace(/\/?$/, 
 <header class="sticky top-0 z-50 border-b border-[var(--line)] bg-[var(--paper)]/95 backdrop-blur">
 	<nav class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
 		<a href={`${base}#top`} class="flex items-center gap-2.5">
-			<svg width="30" height="30" viewBox="0 0 48 48" aria-hidden="true">
-				<path d="M4 36 L16 14 L22 22 L32 8 L44 36 Z" fill="var(--pine)" />
-				<circle cx="32" cy="8" r="2.6" fill="var(--signal)" />
-				<path d="M37.2 4.4 A 8.4 8.4 0 0 1 39.6 11.4" fill="none" stroke="var(--signal)" stroke-width="2" stroke-linecap="round" />
-				<path d="M40.6 1.6 A 13 13 0 0 1 44 12.1" fill="none" stroke="var(--signal)" stroke-width="2" stroke-linecap="round" />
+			<svg width="30" height="30" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+				<rect width="32" height="32" rx="6" fill="#141f18" />
+				<path d="M3 25.5c4.5-3.2 8-4.6 13-4.6s8.5 1.4 13 4.6" stroke="#3f5748" stroke-width="1.6" stroke-linecap="round" />
+				<path d="M6 19 16 9.5 26 15" stroke="#8fa696" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+				<circle cx="6" cy="19" r="3" fill="#141f18" stroke="#8fa696" stroke-width="1.8" />
+				<circle cx="26" cy="15" r="3" fill="#141f18" stroke="#8fa696" stroke-width="1.8" />
+				<path d="M20.3 4.2a6.2 6.2 0 0 1 1.5 5" stroke="#e8824a" stroke-width="1.6" stroke-linecap="round" />
+				<circle cx="16" cy="9.5" r="3.4" fill="#e8824a" />
 			</svg>
 			<span class="font-display text-xl font-bold tracking-tight text-[var(--ink)]">
 				MeshCore<span class="text-[var(--signal)]">PR</span>
