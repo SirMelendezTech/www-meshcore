@@ -20,6 +20,16 @@ export const protocolsPath: Record<Lang, string> = {
 	en: '/en/protocols/',
 };
 
+// Live network map page (embeds CoreScope) for each locale.
+export const mapPath: Record<Lang, string> = {
+	es: '/mapa/',
+	en: '/en/map/',
+};
+
+export const coreScopeUrl = 'https://corescope.prmsh.com/';
+// Embed mode hides CoreScope's own navigation; only #/map and #/channels support it.
+export const coreScopeEmbedUrl = `${coreScopeUrl}#/map?embed=1&theme=dark`;
+
 // Inline links live inside translated strings rendered with set:html, so the
 // shared link styling is kept here.
 const link = (href: string, text: string) =>
@@ -40,6 +50,7 @@ const es = {
 		hardware: 'Hardware',
 		roles: 'Roles',
 		protocolos: 'MeshCore vs Meshtastic',
+		mapa: 'Mapa',
 		configura: 'Configura tu radio',
 		unete: 'Únete',
 		comunidad: 'Comunidad',
@@ -155,6 +166,7 @@ const es = {
 	unete: {
 		title: 'Únete a la red de la isla',
 		intro: 'Con el radio configurado, ya puedes sumarte al canal público de Puerto Rico.',
+		mapHtml: `¿Quieres ver dónde ya hay nodos? ${link('/mapa/', 'Mira el mapa de la red en vivo')}.`,
 		pasos: [
 			{
 				title: 'Pide el canal vigente en Discord',
@@ -181,6 +193,41 @@ const es = {
 		whatsapp: 'Unirte en WhatsApp',
 		sister: 'Ver la red hermana en prmsh.com',
 	},
+	mapa: {
+		meta: {
+			title: 'Mapa en vivo de la red — MeshCore Puerto Rico',
+			description:
+				'Mapa en vivo de los nodos y repetidores MeshCore en Puerto Rico, servido por CoreScope. Mira dónde hay cobertura y abre CoreScope para ver paquetes, rutas y canales.',
+		},
+		title: 'Mapa de la red en vivo',
+		lead: 'Nodos y repetidores MeshCore que se han escuchado en Puerto Rico. Los datos vienen de CoreScope, el monitor de la red que corre la comunidad.',
+		open: 'Abrir CoreScope',
+		newTab: '(se abre en otra pestaña)',
+		howLink: 'Cómo sale tu nodo en el mapa',
+		skipMap: 'Saltar el mapa',
+		frameTitle: 'Mapa en vivo de nodos MeshCore en Puerto Rico (CoreScope)',
+		caption: 'Arrastra para moverte y usa la rueda o dos dedos para hacer zoom. ¿No carga?',
+		captionLink: 'Ábrelo directo en CoreScope',
+		how: {
+			title: 'Cómo sale tu nodo en el mapa',
+			intro: 'CoreScope escucha la red a través de observadores: radios conectados a internet que reportan los paquetes que oyen.',
+			items: [
+				{
+					title: 'Tu nodo tiene que anunciarse',
+					desc: 'Cada nodo manda un anuncio (advert) con su nombre y, si se lo configuraste, su ubicación. Sin ubicación, el nodo existe en CoreScope pero no sale en el mapa.',
+				},
+				{
+					title: 'Un observador tiene que oírlo',
+					desc: 'Si ningún observador queda a tu alcance, ni directo ni a través de repetidores, CoreScope no se entera. Más repetidores en alto significa un mapa más completo.',
+				},
+				{
+					title: 'Tú decides cuánto mostrar',
+					desc: 'La ubicación es opcional. Si no quieres que se vea dónde está tu radio, déjala en blanco o usa un punto aproximado del barrio.',
+				},
+			],
+			more: 'En CoreScope también puedes ver paquetes en tiempo real, rutas entre nodos y estadísticas de la red.',
+		},
+	},
 	footer: {
 		note: 'MeshCore Puerto Rico — proyecto comunitario, código abierto. No es un servicio de emergencia; para 911, llama al 911.',
 		disclaimer: 'Sitio comunitario independiente. No está afiliado ni respaldado por MeshCore Technologies Ltd ni por los desarrolladores de MeshCore. MeshCore y su logo son marcas de sus respectivos dueños.',
@@ -202,6 +249,7 @@ const en: Dictionary = {
 		hardware: 'Hardware',
 		roles: 'Roles',
 		protocolos: 'MeshCore vs Meshtastic',
+		mapa: 'Map',
 		configura: 'Set up your radio',
 		unete: 'Join',
 		comunidad: 'Community',
@@ -317,6 +365,7 @@ const en: Dictionary = {
 	unete: {
 		title: "Join the island's network",
 		intro: "Once your radio is set up, you're ready to join Puerto Rico's public channel.",
+		mapHtml: `Want to see where nodes already are? ${link('/en/map/', 'Check the live network map')}.`,
 		pasos: [
 			{
 				title: 'Ask for the current channel on Discord',
@@ -342,6 +391,41 @@ const en: Dictionary = {
 		discord: 'Join the Discord',
 		whatsapp: 'Join on WhatsApp',
 		sister: 'Visit the sister network at prmsh.com',
+	},
+	mapa: {
+		meta: {
+			title: 'Live network map — MeshCore Puerto Rico',
+			description:
+				'Live map of MeshCore nodes and repeaters in Puerto Rico, served by CoreScope. See where there is coverage and open CoreScope for packets, routes and channels.',
+		},
+		title: 'Live network map',
+		lead: 'MeshCore nodes and repeaters heard in Puerto Rico. The data comes from CoreScope, the network monitor run by the community.',
+		open: 'Open CoreScope',
+		newTab: '(opens in a new tab)',
+		howLink: 'How your node shows up on the map',
+		skipMap: 'Skip the map',
+		frameTitle: 'Live map of MeshCore nodes in Puerto Rico (CoreScope)',
+		caption: 'Drag to move around and use the scroll wheel or two fingers to zoom. Not loading?',
+		captionLink: 'Open it directly in CoreScope',
+		how: {
+			title: 'How your node shows up on the map',
+			intro: 'CoreScope listens to the network through observers: internet-connected radios that report the packets they hear.',
+			items: [
+				{
+					title: 'Your node has to advertise',
+					desc: "Every node sends an advert with its name and, if you set one, its location. Without a location the node still exists in CoreScope but doesn't appear on the map.",
+				},
+				{
+					title: 'An observer has to hear it',
+					desc: "If no observer is within reach, directly or through repeaters, CoreScope never finds out. More repeaters up high means a more complete map.",
+				},
+				{
+					title: 'You decide how much to show',
+					desc: "Location is optional. If you don't want your radio's position visible, leave it blank or use an approximate spot in your neighborhood.",
+				},
+			],
+			more: 'CoreScope also shows live packets, routes between nodes and network statistics.',
+		},
 	},
 	footer: {
 		note: 'MeshCore Puerto Rico — community project, open source. Not an emergency service; for emergencies, call 911.',

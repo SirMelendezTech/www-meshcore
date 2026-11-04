@@ -1,0 +1,131 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SiteFooter from './SiteFooter.astro';
+import SiteHeader from './SiteHeader.astro';
+import { coreScopeEmbedUrl, coreScopeUrl, homePath, languages, mapPath, ui, type Lang } from '../i18n/ui';
+
+interface Props {
+	lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = ui[lang].mapa;
+const otherLang = (Object.keys(languages) as Lang[]).find((l) => l !== lang)!;
+---
+
+<Layout
+	lang={lang}
+	title={t.meta.title}
+	description={t.meta.description}
+	ogLocale={ui[lang].meta.ogLocale}
+	alternates={mapPath}
+>
+	<SiteHeader lang={lang} base={homePath[lang]} altHref={mapPath[otherLang]} />
+
+	<main id="contenido">
+		<section id="top" class="px-6 pb-6 pt-10 sm:pt-14">
+			<div class="mx-auto flex max-w-6xl flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+				<div class="max-w-2xl">
+					<h1 class="font-display text-5xl font-bold leading-[0.95] tracking-tight text-[var(--ink)] sm:text-6xl">
+						{t.title}
+					</h1>
+					<p class="mt-4 text-lg leading-relaxed text-[var(--pine)]">{t.lead}</p>
+				</div>
+				<div class="flex flex-wrap items-center gap-x-6 gap-y-3">
+					<a href={coreScopeUrl} class="btn-primary" target="_blank" rel="noopener">
+						{t.open}
+						<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" fill="none">
+							<path d="M6 3H3v10h10v-3M9 3h4v4M13 3 7 9" stroke="currentColor" stroke-width="1.6" stroke-linecap="square" />
+						</svg>
+						<span class="sr-only">{t.newTab}</span>
+					</a>
+					<a href="#aparecer" class="text-[var(--pine)] underline decoration-[var(--pine)] underline-offset-4 hover:text-[var(--ink)]">
+						{t.howLink}
+					</a>
+				</div>
+			</div>
+		</section>
+
+		<!-- Full-bleed live map. The frame is the page: keep it as wide and tall as the viewport allows,
+		     but leave page margin above/below so touch users can still scroll past it. -->
+		<section class="map-stage relative px-0 sm:px-6">
+			<!-- The embedded map holds many focusable markers; let keyboard users jump past it. -->
+			<a href="#aparecer" class="skip-map">{t.skipMap}</a>
+			<div class="map-frame mx-auto max-w-[96rem]">
+				<iframe
+					src={coreScopeEmbedUrl}
+					title={t.frameTitle}
+					loading="eager"
+					referrerpolicy="strict-origin-when-cross-origin"
+					allow="fullscreen; geolocation"
+					class="block h-full w-full"
+				></iframe>
+			</div>
+			<p class="mx-auto mt-3 max-w-[96rem] px-6 text-sm text-[var(--pine-soft)] sm:px-0">
+				{t.caption}
+				<a href={coreScopeUrl} target="_blank" rel="noopener" class="underline decoration-[var(--pine)] underline-offset-4 hover:text-[var(--ink)]">
+					{t.captionLink}<span class="sr-only"> {t.newTab}</span>
+				</a>.
+			</p>
+		</section>
+
+		<section id="aparecer" class="mt-14 border-t border-[var(--line)] px-6 py-20">
+			<div class="mx-auto max-w-6xl">
+				<h2 class="font-display text-3xl font-bold text-[var(--ink)] sm:text-4xl">{t.how.title}</h2>
+				<p class="mt-4 max-w-2xl text-lg leading-relaxed text-[var(--pine)]">{t.how.intro}</p>
+				<ul class="mt-10 grid gap-8 md:grid-cols-3">
+					{t.how.items.map((i) => (
+						<li class="border-l-2 border-[var(--signal)] py-1 pl-5">
+							<h3 class="font-display text-xl font-semibold text-[var(--ink)]">{i.title}</h3>
+							<p class="mt-2 leading-relaxed text-[var(--pine)]">{i.desc}</p>
+						</li>
+					))}
+				</ul>
+				<p class="mt-12 max-w-2xl text-[var(--pine)]">
+					{t.how.more}
+					<a href={coreScopeUrl} target="_blank" rel="noopener" class="underline decoration-[var(--pine)] underline-offset-4 hover:text-[var(--ink)]">
+						{t.open}<span class="sr-only"> {t.newTab}</span>
+					</a>.
+				</p>
+			</div>
+		</section>
+	</main>
+
+	<SiteFooter lang={lang} />
+</Layout>
+
+<style>
+	.skip-map {
+		position: absolute;
+		left: -9999px;
+		z-index: 10;
+		background: var(--signal);
+		color: var(--paper);
+		padding: 0.75rem 1.25rem;
+		font-weight: 600;
+	}
+	.skip-map:focus {
+		left: 1.5rem;
+		top: 1rem;
+	}
+
+	.map-frame {
+		/* Viewport minus the sticky header, with a floor so short laptop screens still get a usable map. */
+		height: max(28rem, calc(100svh - 12rem));
+		border-block: 1px solid var(--pine);
+		background-color: var(--paper-raised);
+	}
+
+	@media (min-width: 640px) {
+		.map-frame {
+			border-inline: 1px solid var(--pine);
+		}
+	}
+
+	/* Phones: shorter frame so there is always page to grab above and below it when scrolling. */
+	@media (max-width: 639px) {
+		.map-frame {
+			height: 70svh;
+		}
+	}
+</style>
