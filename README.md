@@ -83,7 +83,5 @@ de `meshcore.prmsh.com` apunta al Pages de este repo.
 - Confirmar los valores del preset "USA/Canadá" (`src/i18n/ui.ts`,
   `configura.specs` en ambos idiomas) contra el selector de la app MeshCore antes de cada
   release — los presets pueden cambiar de versión a versión.
-- Revisar `/mapa/` en un navegador: ancho del nav a 1280px y que el mapa
-  abra centrado en Puerto Rico (depende de la configuración de CoreScope).
 - El canal público de Puerto Rico (nombre/clave) se comparte en Discord a
   propósito, no en esta página, para que nunca quede desactualizado.
