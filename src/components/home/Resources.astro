@@ -1,0 +1,267 @@
+---
+import ExternalIcon from '../ExternalIcon.astro';
+import { links, linkAttrs, type LinkId } from '../../config/links';
+import { mapPath, protocolsPath, ui, type Lang } from '../../i18n/ui';
+
+interface Props {
+	lang: Lang;
+}
+const { lang } = Astro.props;
+const t = ui[lang];
+const r = t.resources;
+const onSiteHref: Record<string, string> = { mapa: mapPath[lang], comparar: protocolsPath[lang] };
+
+type Item = { id: LinkId; label: string; thirdParty?: boolean };
+---
+
+<section id="recursos" class="section" aria-labelledby="resources-title">
+	<div class="container">
+		<header class="section-head">
+			<h2 id="resources-title">{r.title}</h2>
+			<p>{r.body}</p>
+		</header>
+
+		<div class="cols">
+			{r.groups.map((g) => (
+				<section class="col" id={g.id} aria-labelledby={`res-${g.id}`}>
+					<h3 id={`res-${g.id}`}>{g.title}</h3>
+					<p class="col__body">{g.body}</p>
+					<ul class="links">
+						{(g.items as Item[]).map((item) => (
+							<li>
+								<a {...linkAttrs(item.id)}>
+									<span class="links__label">
+										{item.label}
+										<ExternalIcon />
+										<span class="visually-hidden">{t.a11y.newTab}</span>
+									</span>
+									<span class="links__meta mono">
+										{links[item.id].display}
+										{item.thirdParty && <span class="flag">{r.thirdParty}</span>}
+									</span>
+								</a>
+							</li>
+						))}
+					</ul>
+				</section>
+			))}
+
+			<section class="col" id="hardware" aria-labelledby="res-hardware">
+				<h3 id="res-hardware">{r.hardware.title}</h3>
+				<p class="col__body">{r.hardware.body}</p>
+				<dl class="hw">
+					{r.hardware.groups.map((g) => (
+						<div>
+							<dt class="mono">{g.role}</dt>
+							<dd>
+								<ul>
+									{g.devices.map((d) => (
+										<li>{d}</li>
+									))}
+								</ul>
+							</dd>
+						</div>
+					))}
+				</dl>
+				<p class="col__note" set:html={r.hardware.moreHtml} />
+			</section>
+		</div>
+
+		<div class="onsite">
+			<h3 class="onsite__title">{r.onSite.title}</h3>
+			<ul>
+				{r.onSite.items.map((item) => (
+					<li>
+						<a href={onSiteHref[item.key]}>
+							<span class="onsite__label">{item.label}</span>
+							<span class="onsite__body">{item.body}</span>
+						</a>
+					</li>
+				))}
+			</ul>
+		</div>
+	</div>
+</section>
+
+<style>
+	.cols {
+		display: grid;
+		gap: var(--s-7);
+	}
+
+	@media (min-width: 64rem) {
+		.cols {
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+			gap: 0;
+		}
+
+		.col {
+			padding-inline: var(--s-6);
+			border-left: 1px solid var(--c-border);
+		}
+
+		.col:first-child {
+			padding-left: 0;
+			border-left: 0;
+		}
+
+		.col:last-child {
+			padding-right: 0;
+		}
+	}
+
+	.col {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-3);
+		scroll-margin-top: 6rem;
+	}
+
+	.col h3 {
+		font-size: var(--t-h3);
+	}
+
+	.col__body {
+		color: var(--c-text-2);
+		margin-bottom: var(--s-3);
+	}
+
+	.links {
+		border-top: 1px solid var(--c-border);
+	}
+
+	.links li {
+		border-bottom: 1px solid var(--c-border);
+	}
+
+	.links a {
+		display: grid;
+		gap: 0.15rem;
+		padding-block: var(--s-3);
+		min-height: 44px;
+		text-decoration: none;
+		color: var(--c-text);
+	}
+
+	.links__label {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--s-2);
+		font-weight: 600;
+	}
+
+	.links__label :global(svg) {
+		width: 0.9em;
+		height: 0.9em;
+		flex: none;
+		color: var(--c-text-2);
+		transition: transform 200ms var(--ease-out);
+	}
+
+	.links__meta {
+		display: inline-flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--s-2);
+		color: var(--c-text-2);
+		overflow-wrap: anywhere;
+	}
+
+	.links a:hover .links__label {
+		text-decoration: underline;
+		text-decoration-color: var(--c-accent-2);
+		text-underline-offset: 4px;
+	}
+
+	.links a:hover .links__label :global(svg) {
+		transform: translate(2px, -2px);
+	}
+
+	.hw {
+		display: grid;
+		margin: 0;
+		border-top: 1px solid var(--c-border);
+	}
+
+	.hw > div {
+		display: grid;
+		gap: var(--s-2);
+		padding-block: var(--s-3);
+		border-bottom: 1px solid var(--c-border);
+	}
+
+	.hw dt {
+		color: var(--c-accent-2);
+	}
+
+	.hw dd {
+		margin: 0;
+	}
+
+	.hw ul {
+		display: grid;
+		gap: 0.15rem;
+	}
+
+	.col__note {
+		margin-top: var(--s-2);
+		font-size: var(--t-sm);
+		color: var(--c-text-2);
+	}
+
+	.onsite {
+		display: grid;
+		gap: var(--s-4);
+		margin-top: var(--s-8);
+		padding-top: var(--s-6);
+		border-top: 1px solid var(--c-border);
+	}
+
+	@media (min-width: 64rem) {
+		.onsite {
+			grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+			gap: var(--s-8);
+		}
+	}
+
+	.onsite__title {
+		font-size: var(--t-lg);
+	}
+
+	.onsite ul {
+		display: grid;
+		gap: var(--s-4);
+	}
+
+	@media (min-width: 48rem) {
+		.onsite ul {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+
+	.onsite a {
+		display: grid;
+		gap: var(--s-1);
+		height: 100%;
+		padding: var(--s-4) var(--s-5);
+		border: 1px solid var(--c-border);
+		border-radius: var(--r-card);
+		background: var(--c-surface);
+		text-decoration: none;
+		transition: border-color 200ms var(--ease-out);
+	}
+
+	.onsite a:hover {
+		border-color: var(--c-accent-2);
+	}
+
+	.onsite__label {
+		font-weight: 600;
+		color: var(--c-text);
+	}
+
+	.onsite__body {
+		color: var(--c-text-2);
+		font-size: var(--t-sm);
+	}
+</style>

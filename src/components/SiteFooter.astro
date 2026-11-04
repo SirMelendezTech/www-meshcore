@@ -1,24 +1,198 @@
 ---
-import { ui, type Lang } from '../i18n/ui';
+import Wordmark from './Wordmark.astro';
+import { linkAttrs } from '../config/links';
+import { homePath, mapPath, protocolsPath, ui, type Lang } from '../i18n/ui';
 
 interface Props {
 	lang: Lang;
 }
 
-const t = ui[Astro.props.lang];
+const { lang } = Astro.props;
+const t = ui[lang];
+const f = t.footer;
+const year = new Date().getFullYear();
+
+const groups = [
+	{
+		title: f.family,
+		items: [
+			{ label: 'PRMSH Community', ...linkAttrs('prmsh'), ext: false },
+			{ label: 'Meshtastic', ...linkAttrs('meshtastic'), ext: false },
+			{ label: 'MeshCore', ...linkAttrs('meshcore'), ext: false },
+		],
+	},
+	{
+		title: f.site,
+		items: [
+			{ label: t.nav.recursos, href: `${homePath[lang]}#recursos`, ext: false },
+			{ label: t.nav.mapa, href: mapPath[lang], ext: false },
+			{ label: t.nav.comparar, href: protocolsPath[lang], ext: false },
+		],
+	},
+	{
+		title: f.community,
+		items: [
+			{ label: 'Discord', ...linkAttrs('discord'), ext: true },
+			{ label: 'Facebook', ...linkAttrs('facebook'), ext: true },
+			{ label: 'Reddit', ...linkAttrs('reddit'), ext: true },
+		],
+	},
+];
 ---
 
-<footer class="border-t border-[var(--line)] px-6 py-10">
-	<div class="mx-auto max-w-6xl text-sm text-[var(--pine-soft)]">
-	<div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-		<p>{t.footer.note}</p>
-		<div class="flex gap-5">
-			<a href="https://discord.gg/3v6rRhNRpD" class="hover:text-[var(--ink)]">Discord</a>
-			<a href="https://chat.whatsapp.com/HwCszML0lrv7Ld2N3Tc6QT" class="hover:text-[var(--ink)]" rel="noopener">WhatsApp</a>
-			<a href="https://prmsh.com" class="hover:text-[var(--ink)]">PRMSH</a>
-			<a href="https://github.com/SirMelendezTech/www-meshcore" class="hover:text-[var(--ink)]">GitHub</a>
+<footer class="footer">
+	<div class="container footer__grid">
+		<div class="footer__brand">
+			<p class="footer__name">
+				<Wordmark text="PRMSH" />
+				<span class="footer__slash" aria-hidden="true">
+					/
+				</span>
+				<span>MeshCore Puerto Rico</span>
+			</p>
+			<p>{f.description}</p>
+		</div>
+
+		<nav class="footer__nav" aria-label={t.a11y.footerNav}>
+			{groups.map((g) => (
+				<div>
+					<h2 class="footer__title">{g.title}</h2>
+					<ul>
+						{g.items.map(({ label, ext, ...attrs }) => (
+							<li>
+								<a {...attrs}>
+									{label}
+									{ext && <span class="visually-hidden">{t.a11y.newTab}</span>}
+								</a>
+							</li>
+						))}
+					</ul>
+				</div>
+			))}
+		</nav>
+
+		<div class="footer__legal">
+			<p>{f.legal}</p>
+			<p>{f.emergency}</p>
+			<p class="mono">
+				© <span id="year">{year}</span>
+				{f.rights} ·
+				<a
+					href="https://github.com/SirMelendezTech/www-meshcore"
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					{f.source}
+					<span class="visually-hidden"> {t.a11y.newTab}</span>
+				</a>
+			</p>
 		</div>
 	</div>
-	<p class="mt-6 text-xs">{t.footer.disclaimer}</p>
-	</div>
 </footer>
+
+<script is:inline>
+	// Keep the copyright year current even if the static build is old.
+	document.getElementById('year').textContent = String(new Date().getFullYear());
+</script>
+
+<style>
+	.footer {
+		border-top: 1px solid var(--c-border);
+		padding-block: var(--s-8) var(--s-6);
+		background: var(--c-surface);
+	}
+
+	.footer__grid {
+		display: grid;
+		gap: var(--s-7);
+	}
+
+	@media (min-width: 48rem) {
+		.footer__grid {
+			grid-template-columns: 1fr auto;
+		}
+
+		.footer__legal {
+			grid-column: 1 / -1;
+		}
+	}
+
+	.footer__brand {
+		display: grid;
+		gap: var(--s-3);
+		align-content: start;
+		max-width: 26rem;
+	}
+
+	.footer__brand p {
+		color: var(--c-text-2);
+	}
+
+	.footer__name {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--s-2);
+		font-family: var(--f-display);
+		font-weight: 650;
+		font-size: 1.125rem;
+	}
+
+	.footer__brand .footer__name {
+		color: var(--c-text);
+	}
+
+	.footer__slash {
+		color: var(--c-border-strong);
+	}
+
+	.footer__nav {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--s-6) var(--s-8);
+	}
+
+	.footer__title {
+		font-family: var(--f-body);
+		font-size: var(--t-sm);
+		font-weight: 600;
+		letter-spacing: 0;
+		color: var(--c-text-2);
+		margin-bottom: var(--s-2);
+	}
+
+	.footer__nav a {
+		display: inline-flex;
+		align-items: center;
+		min-height: 44px;
+		color: var(--c-text);
+		text-decoration: none;
+	}
+
+	.footer__nav a:hover {
+		text-decoration: underline;
+		text-underline-offset: 4px;
+	}
+
+	.footer__legal {
+		display: grid;
+		gap: var(--s-3);
+		padding-top: var(--s-5);
+		border-top: 1px solid var(--c-border);
+		font-size: var(--t-xs);
+		color: var(--c-text-2);
+	}
+
+	.footer__legal p {
+		max-width: 70ch;
+	}
+
+	.footer__legal a {
+		color: inherit;
+		text-underline-offset: 3px;
+	}
+
+	.footer__legal a:hover {
+		color: var(--c-text);
+	}
+</style>

@@ -1,4 +1,8 @@
-import { linkHtml as link, type Lang } from './ui';
+import type { Lang } from './ui';
+
+// Link inside translated copy rendered with set:html. Opens off-site.
+const link = (href: string, text: string, newTab: string) =>
+	`<a class="inline-link" href="${href}" target="_blank" rel="noopener noreferrer">${text}<span class="visually-hidden"> ${newTab}</span></a>`;
 
 // MeshCore vs Meshtastic comparison. Facts summarized from NodakMesh's
 // comparison (checked October 2026 against MeshCore 1.18.0, Meshtastic 2.7.26
@@ -7,12 +11,12 @@ const sourceUrl = 'https://nodakmesh.org/protocols';
 
 const es = {
 	meta: {
-		title: 'MeshCore vs Meshtastic — diferencias y cuál elegir | MeshCore PR',
+		title: 'MeshCore vs Meshtastic: diferencias y cuál elegir | MeshCore Puerto Rico',
 		description:
 			'Comparación de MeshCore y Meshtastic, los dos protocolos mesh LoRa más usados: quién retransmite, alcance, cifrado, apps, hardware y cuál conviene en Puerto Rico.',
 	},
 	hero: {
-		eyebrow: 'Protocolos — octubre 2026',
+		eyebrow: 'MESHCORE / MESHTASTIC / OCTUBRE 2026',
 		title: 'MeshCore vs Meshtastic',
 		lead: 'Los dos mandan texto sin señal celular ni internet, y corren en el mismo hardware barato. La diferencia de fondo es quién retransmite: en Meshtastic, cualquier nodo; en MeshCore, solo los repetidores. Eso cambia cómo escala la red, cuánto hay que planificar y cómo se siente el primer día.',
 		checked: 'Revisado contra MeshCore 1.18.0, Meshtastic 2.7.26 (estable) y 2.8.1 (alpha).',
@@ -37,21 +41,53 @@ const es = {
 				'tu red local ya usa MeshCore — como esta red en Puerto Rico.',
 			],
 		},
-		incompatHtml: `<strong class="text-[var(--ink)]">No se entienden entre sí.</strong> Usan formato de paquete, cifrado, sync word de LoRa y (casi siempre) frecuencia distintos. El hardware sí es el mismo: una placa se puede reflashear de uno a otro.`,
+		incompatHtml: `<strong>No se entienden entre sí.</strong> Usan formato de paquete, cifrado, sync word de LoRa y (casi siempre) frecuencia distintos. El hardware sí es el mismo: una placa se puede reflashear de uno a otro.`,
 	},
 	tabla: {
 		title: 'Lado a lado',
 		feature: 'Aspecto',
 		rows: [
-			{ k: 'Quién retransmite', mt: 'Todos los nodos por defecto, más routers', mc: 'Solo repetidores; los companions no retransmiten' },
-			{ k: 'Cómo viaja el mensaje', mt: 'Inundación controlada; los DM usan ruta next-hop cuando la conocen (desde 2.6)', mc: 'Los canales inundan por repetidores; el DM inunda una vez y luego sigue la ruta aprendida' },
-			{ k: 'Límite de saltos', mt: '1 a 7, por defecto 3', mc: 'Hasta 63 (IDs de 1 byte), o 32 / 21 con IDs más largos' },
-			{ k: 'Largo del texto', mt: '200 bytes en las apps', mc: '160 bytes (150 en DM, menos en canales)' },
-			{ k: 'Cifrado', mt: 'Canales AES; DM con llave pública (2.5+); broadcasts firmados (2.8)', mc: 'Identidad Ed25519, adverts firmados, AES-128 en DM y canales' },
-			{ k: 'App de teléfono', mt: 'Gratis y abierta (Android, iPhone, web)', mc: 'Gratis; la gestión de repetidores en el teléfono tiene un temporizador que se quita con compra en la app' },
+			{
+				k: 'Quién retransmite',
+				mt: 'Todos los nodos por defecto, más routers',
+				mc: 'Solo repetidores; los companions no retransmiten',
+			},
+			{
+				k: 'Cómo viaja el mensaje',
+				mt: 'Inundación controlada; los DM usan ruta next-hop cuando la conocen (desde 2.6)',
+				mc: 'Los canales inundan por repetidores; el DM inunda una vez y luego sigue la ruta aprendida',
+			},
+			{
+				k: 'Límite de saltos',
+				mt: '1 a 7, por defecto 3',
+				mc: 'Hasta 63 (IDs de 1 byte), o 32 / 21 con IDs más largos',
+			},
+			{
+				k: 'Largo del texto',
+				mt: '200 bytes en las apps',
+				mc: '160 bytes (150 en DM, menos en canales)',
+			},
+			{
+				k: 'Cifrado',
+				mt: 'Canales AES; DM con llave pública (2.5+); broadcasts firmados (2.8)',
+				mc: 'Identidad Ed25519, adverts firmados, AES-128 en DM y canales',
+			},
+			{
+				k: 'App de teléfono',
+				mt: 'Gratis y abierta (Android, iPhone, web)',
+				mc: 'Gratis; la gestión de repetidores en el teléfono tiene un temporizador que se quita con compra en la app',
+			},
 			{ k: 'Licencia del firmware', mt: 'GPL-3.0', mc: 'MIT' },
-			{ k: 'Ajuste por defecto en EE.UU.', mt: 'LongFast: 906.875 MHz, 250 kHz, SF11', mc: 'Recomendado: 910.525 MHz, 62.5 kHz, SF7' },
-			{ k: '¿Necesita infraestructura?', mt: 'No; dos radios de mano ya forman una red', mc: 'Para pasar del alcance directo, sí: al menos un repetidor' },
+			{
+				k: 'Ajuste por defecto en EE.UU.',
+				mt: 'LongFast: 906.875 MHz, 250 kHz, SF11',
+				mc: 'Recomendado: 910.525 MHz, 62.5 kHz, SF7',
+			},
+			{
+				k: '¿Necesita infraestructura?',
+				mt: 'No; dos radios de mano ya forman una red',
+				mc: 'Para pasar del alcance directo, sí: al menos un repetidor',
+			},
 			{ k: 'Inicio del proyecto', mt: '2020', mc: '2025' },
 		],
 	},
@@ -105,7 +141,8 @@ const es = {
 				'Los canales usan una llave compartida de 128 bits. La del canal Public es pública, y los canales con hashtag están abiertos a quien escriba el nombre.',
 			],
 		},
-		ambos: 'En los dos, el canal público por defecto lo puede leer cualquiera en la red. Para algo sensible, usa un canal privado o un DM.',
+		ambos:
+			'En los dos, el canal público por defecto lo puede leer cualquiera en la red. Para algo sensible, usa un canal privado o un DM.',
 	},
 	apps: {
 		title: 'Apps, hardware y costo',
@@ -178,23 +215,23 @@ const es = {
 	},
 	cta: {
 		title: '¿Listo para probar MeshCore?',
-		body: 'Si ya decidiste, configura tu radio con el preset de EE.UU. y únete al canal de la isla. Si prefieres Meshtastic, la red hermana PRMSH te recibe.',
+		body: 'Si ya decidiste, configura tu radio con el preset de EE.UU. y únete al canal de la isla. Si prefieres Meshtastic, PRMSH tiene una guía para esa red también.',
 		primary: 'Configura tu radio',
-		sister: 'Ir a PRMSH (Meshtastic)',
+		sister: 'Ir a Meshtastic PR',
 	},
-	sourceHtml: `Datos resumidos de la ${link(sourceUrl, 'comparación de NodakMesh')} (octubre 2026). MeshCore PR no está afiliado a los proyectos MeshCore ni Meshtastic.`,
+	sourceHtml: `Datos resumidos de la ${link(sourceUrl, 'comparación de NodakMesh', '(abre en una pestaña nueva)')} (octubre 2026). MeshCore Puerto Rico no está afiliado a los proyectos MeshCore ni Meshtastic.`,
 };
 
 export type ProtocolosDictionary = typeof es;
 
 const en: ProtocolosDictionary = {
 	meta: {
-		title: 'MeshCore vs Meshtastic — differences and which to pick | MeshCore PR',
+		title: 'MeshCore vs Meshtastic: differences and which to pick | MeshCore Puerto Rico',
 		description:
 			'A comparison of MeshCore and Meshtastic, the two most used LoRa mesh protocols: who relays, range, encryption, apps, hardware and which one fits Puerto Rico.',
 	},
 	hero: {
-		eyebrow: 'Protocols — October 2026',
+		eyebrow: 'MESHCORE / MESHTASTIC / OCTOBER 2026',
 		title: 'MeshCore vs Meshtastic',
 		lead: 'Both send text without cell service or internet, and both run on the same cheap hardware. The core difference is who relays: in Meshtastic, any node; in MeshCore, only repeaters. That shapes how the network scales, how much planning it takes and what your first day feels like.',
 		checked: 'Checked against MeshCore 1.18.0, Meshtastic 2.7.26 (stable) and 2.8.1 (alpha).',
@@ -219,21 +256,53 @@ const en: ProtocolosDictionary = {
 				'your local mesh already runs MeshCore — like this network in Puerto Rico.',
 			],
 		},
-		incompatHtml: `<strong class="text-[var(--ink)]">They can’t hear each other.</strong> Packet format, encryption, LoRa sync word and (usually) frequency all differ. The hardware is shared, though: a board can be reflashed from one to the other.`,
+		incompatHtml: `<strong>They can’t hear each other.</strong> Packet format, encryption, LoRa sync word and (usually) frequency all differ. The hardware is shared, though: a board can be reflashed from one to the other.`,
 	},
 	tabla: {
 		title: 'Side by side',
 		feature: 'Feature',
 		rows: [
-			{ k: 'Who relays', mt: 'Every node by default, plus routers', mc: "Only repeaters; companions don't relay" },
-			{ k: 'How a message travels', mt: 'Managed flooding; DMs use next-hop routing once a route is known (since 2.6)', mc: 'Channels flood through repeaters; a DM floods once, then follows the learned path' },
-			{ k: 'Hop limit', mt: '1 to 7, default 3', mc: 'Up to 63 (1-byte IDs), or 32 / 21 with longer IDs' },
-			{ k: 'Text length', mt: '200 bytes in the apps', mc: '160 bytes (150 in DMs, less in channels)' },
-			{ k: 'Encryption', mt: 'AES channels; public-key DMs (2.5+); signed broadcasts (2.8)', mc: 'Ed25519 identities, signed adverts, AES-128 DMs and channels' },
-			{ k: 'Phone app', mt: 'Free and open source (Android, iPhone, web)', mc: 'Free; phone repeater management has a timer removable by in-app purchase' },
+			{
+				k: 'Who relays',
+				mt: 'Every node by default, plus routers',
+				mc: "Only repeaters; companions don't relay",
+			},
+			{
+				k: 'How a message travels',
+				mt: 'Managed flooding; DMs use next-hop routing once a route is known (since 2.6)',
+				mc: 'Channels flood through repeaters; a DM floods once, then follows the learned path',
+			},
+			{
+				k: 'Hop limit',
+				mt: '1 to 7, default 3',
+				mc: 'Up to 63 (1-byte IDs), or 32 / 21 with longer IDs',
+			},
+			{
+				k: 'Text length',
+				mt: '200 bytes in the apps',
+				mc: '160 bytes (150 in DMs, less in channels)',
+			},
+			{
+				k: 'Encryption',
+				mt: 'AES channels; public-key DMs (2.5+); signed broadcasts (2.8)',
+				mc: 'Ed25519 identities, signed adverts, AES-128 DMs and channels',
+			},
+			{
+				k: 'Phone app',
+				mt: 'Free and open source (Android, iPhone, web)',
+				mc: 'Free; phone repeater management has a timer removable by in-app purchase',
+			},
 			{ k: 'Firmware license', mt: 'GPL-3.0', mc: 'MIT' },
-			{ k: 'Default US settings', mt: 'LongFast: 906.875 MHz, 250 kHz, SF11', mc: 'Recommended: 910.525 MHz, 62.5 kHz, SF7' },
-			{ k: 'Needs infrastructure?', mt: 'No; two handhelds already form a mesh', mc: 'Beyond direct range, yes: at least one repeater' },
+			{
+				k: 'Default US settings',
+				mt: 'LongFast: 906.875 MHz, 250 kHz, SF11',
+				mc: 'Recommended: 910.525 MHz, 62.5 kHz, SF7',
+			},
+			{
+				k: 'Needs infrastructure?',
+				mt: 'No; two handhelds already form a mesh',
+				mc: 'Beyond direct range, yes: at least one repeater',
+			},
 			{ k: 'Project started', mt: '2020', mc: '2025' },
 		],
 	},
@@ -287,7 +356,8 @@ const en: ProtocolosDictionary = {
 				"Channels use a shared 128-bit key. The Public channel's key is published, and hashtag channels are open to anyone who types the name.",
 			],
 		},
-		ambos: 'In both, the default public channel can be read by anyone on the mesh. For anything sensitive, use a private channel or a DM.',
+		ambos:
+			'In both, the default public channel can be read by anyone on the mesh. For anything sensitive, use a private channel or a DM.',
 	},
 	apps: {
 		title: 'Apps, hardware and cost',
@@ -360,11 +430,11 @@ const en: ProtocolosDictionary = {
 	},
 	cta: {
 		title: 'Ready to try MeshCore?',
-		body: "If you've made up your mind, set up your radio with the US preset and join the island's channel. If you'd rather run Meshtastic, sister network PRMSH will welcome you.",
+		body: "If you've made up your mind, set up your radio with the US preset and join the island's channel. If you'd rather run Meshtastic, PRMSH has a guide for that network too.",
 		primary: 'Set up your radio',
-		sister: 'Go to PRMSH (Meshtastic)',
+		sister: 'Go to Meshtastic PR',
 	},
-	sourceHtml: `Facts summarized from ${link(sourceUrl, "NodakMesh's comparison")} (October 2026). MeshCore PR is not affiliated with the MeshCore or Meshtastic projects.`,
+	sourceHtml: `Facts summarized from ${link(sourceUrl, "NodakMesh's comparison", '(opens in a new tab)')} (October 2026). MeshCore Puerto Rico is not affiliated with the MeshCore or Meshtastic projects.`,
 };
 
 export const protocolos: Record<Lang, ProtocolosDictionary> = { es, en };

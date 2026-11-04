@@ -1,10 +1,9 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import SiteFooter from './SiteFooter.astro';
-import LineWavesPanel from './LineWavesPanel.astro';
-import RadarBackdrop from './RadarBackdrop.astro';
 import SiteHeader from './SiteHeader.astro';
-import { homePath, languages, protocolsPath, ui, type Lang } from '../i18n/ui';
+import { linkAttrs } from '../config/links';
+import { homePath, languages, protocolsPath, type Lang } from '../i18n/ui';
 import { protocolos } from '../i18n/protocolos';
 
 interface Props {
@@ -16,68 +15,70 @@ const t = protocolos[lang];
 const otherLang = (Object.keys(languages) as Lang[]).find((l) => l !== lang)!;
 const home = homePath[lang];
 
-// Two-column MeshCore/Meshtastic lists for the routing and news sections.
-// MeshCore goes first: it's what this network runs.
-const pairs = [
-	{ id: 'ruteo', s: t.ruteo },
-	{ id: 'novedades', s: t.novedades },
+// PRMSH colour convention: teal marks MeshCore, lime marks Meshtastic.
+// MeshCore goes first: it's what this site is about.
+const pairs = (s: { meshcore: Col; meshtastic: Col }) => [
+	{ ...s.meshcore, tone: 'mc' },
+	{ ...s.meshtastic, tone: 'mt' },
 ];
+type Col = { title: string; items: string[] };
 ---
 
 <Layout
 	lang={lang}
 	title={t.meta.title}
 	description={t.meta.description}
-	ogLocale={ui[lang].meta.ogLocale}
 	alternates={protocolsPath}
 >
-	<SiteHeader lang={lang} base={home} altHref={protocolsPath[otherLang]} />
+	<SiteHeader lang={lang} altHref={protocolsPath[otherLang]} />
 
 	<main id="contenido">
-		<!-- Hero -->
-		<section id="top" class="border-b border-[var(--line)] px-6 pb-14 pt-14 sm:pb-20 sm:pt-20">
-			<div class="mx-auto max-w-6xl">
-				<p class="font-mono text-sm text-[var(--pine)]">{t.hero.eyebrow}</p>
-				<h1 class="font-display mt-3 text-5xl font-bold leading-[0.95] tracking-tight text-[var(--ink)] sm:text-6xl">
-					{t.hero.title}
-				</h1>
-				<p class="mt-6 max-w-2xl text-lg leading-relaxed text-[var(--pine)]">{t.hero.lead}</p>
-				<p class="mt-4 font-mono text-xs text-[var(--pine-soft)]">{t.hero.checked}</p>
+		<section class="intro" aria-labelledby="cmp-title">
+			<div class="container">
+				<p class="intro__eyebrow mono">{t.hero.eyebrow}</p>
+				<h1 id="cmp-title">{t.hero.title}</h1>
+				<p class="intro__lead">{t.hero.lead}</p>
+				<p class="intro__checked mono">{t.hero.checked}</p>
 			</div>
 		</section>
 
-		<!-- Respuesta corta -->
-		<section id="corto" class="border-b border-[var(--line)] px-6 py-20">
-			<div class="mx-auto max-w-6xl">
-				<h2 class="font-display text-3xl font-bold text-[var(--ink)] sm:text-4xl">{t.corto.title}</h2>
-				<div class="mt-10 grid gap-8 md:grid-cols-2">
-					{[
-						{ s: t.corto.meshcore, accent: 'var(--signal)' },
-						{ s: t.corto.meshtastic, accent: 'var(--vhf)' },
-					].map(({ s, accent }) => (
-						<div class="border-l-2 py-1 pl-5" style={`border-color: ${accent}`}>
-							<h3 class="font-display text-xl font-semibold text-[var(--ink)]">{s.title}</h3>
-							<ul class="mt-3 space-y-2 text-[var(--pine)]">
-								{s.items.map((i) => <li>{i}</li>)}
+		<section id="corto" class="section" aria-labelledby="corto-title">
+			<div class="container">
+				<header class="section-head">
+					<h2 id="corto-title">{t.corto.title}</h2>
+				</header>
+				<div class="cols">
+					{pairs(t.corto).map((c) => (
+						<div class:list={['col', `col--${c.tone}`]}>
+							<h3>{c.title}</h3>
+							<ul class="bullets">
+								{c.items.map((i) => (
+									<li>{i}</li>
+								))}
 							</ul>
 						</div>
 					))}
 				</div>
-				<p class="mt-10 max-w-2xl text-[var(--pine)]" set:html={t.corto.incompatHtml} />
+				<p class="callout" set:html={t.corto.incompatHtml} />
 			</div>
 		</section>
 
-		<!-- Tabla -->
-		<section id="tabla" class="border-b border-[var(--line)] px-6 py-20">
-			<div class="mx-auto max-w-6xl">
-				<h2 id="tabla-title" class="font-display text-3xl font-bold text-[var(--ink)] sm:text-4xl">{t.tabla.title}</h2>
-				<div class="mt-10 overflow-x-auto" tabindex="0" role="region" aria-labelledby="tabla-title">
-					<table class="compare w-full min-w-[40rem] text-left text-sm">
+		<section id="tabla" class="section" aria-labelledby="tabla-title">
+			<div class="container">
+				<header class="section-head">
+					<h2 id="tabla-title">{t.tabla.title}</h2>
+				</header>
+				<div class="table-wrap" tabindex="0" role="region" aria-labelledby="tabla-title">
+					<table class="compare">
 						<thead>
 							<tr>
 								<th scope="col">{t.tabla.feature}</th>
-								<th scope="col" class="text-[var(--signal)]">MeshCore</th>
-								<th scope="col" class="text-[var(--vhf)]">Meshtastic</th>
+								<th scope="col" class="th--mc">
+									MeshCore
+								</th>
+								<th scope="col" class="th--mt">
+									Meshtastic
+								</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -94,120 +95,132 @@ const pairs = [
 			</div>
 		</section>
 
-		{pairs.slice(0, 1).map(({ id, s }) => (
-			<section id={id} class="border-b border-[var(--line)] px-6 py-20">
-				<div class="mx-auto max-w-6xl">
-					<h2 class="font-display text-3xl font-bold text-[var(--ink)] sm:text-4xl">{s.title}</h2>
-					<div class="mt-10 grid gap-10 md:grid-cols-2">
-						{[s.meshcore, s.meshtastic].map((col) => (
-							<div>
-								<h3 class="font-display text-xl font-semibold text-[var(--ink)]">{col.title}</h3>
-								<ul class="mt-2">
-									{col.items.map((i) => <li class="step-row py-3 text-[var(--pine)]">{i}</li>)}
-								</ul>
-							</div>
-						))}
-					</div>
-				</div>
-			</section>
-		))}
-
-		<!-- Alcance -->
-		<section id="alcance" class="border-b border-[var(--line)] px-6 py-20">
-			<div class="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[0.8fr_1.2fr]">
-				<div>
-					<h2 class="font-display text-3xl font-bold text-[var(--ink)] sm:text-4xl">{t.alcance.title}</h2>
-					<LineWavesPanel />
-				</div>
-				<div class="space-y-4 text-[var(--pine)]">
-					{t.alcance.paragraphs.map((p) => <p>{p}</p>)}
-				</div>
-			</div>
-		</section>
-
-		<!-- Cifrado -->
-		<section id="cifrado" class="border-b border-[var(--line)] px-6 py-20">
-			<div class="mx-auto max-w-6xl">
-				<h2 class="font-display text-3xl font-bold text-[var(--ink)] sm:text-4xl">{t.cifrado.title}</h2>
-				<div class="mt-10 grid gap-10 md:grid-cols-2">
-					{[t.cifrado.meshcore, t.cifrado.meshtastic].map((col) => (
-						<div>
-							<h3 class="font-display text-xl font-semibold text-[var(--ink)]">{col.title}</h3>
-							<ul class="mt-2">
-								{col.items.map((i) => <li class="step-row py-3 text-[var(--pine)]">{i}</li>)}
+		<section id="ruteo" class="section" aria-labelledby="ruteo-title">
+			<div class="container">
+				<header class="section-head">
+					<h2 id="ruteo-title">{t.ruteo.title}</h2>
+				</header>
+				<div class="cols">
+					{pairs(t.ruteo).map((c) => (
+						<div class:list={['col', `col--${c.tone}`]}>
+							<h3>{c.title}</h3>
+							<ul class="rows">
+								{c.items.map((i) => (
+									<li>{i}</li>
+								))}
 							</ul>
 						</div>
 					))}
 				</div>
-				<p class="spec-plate mt-10 max-w-2xl p-5 text-[var(--ink)]">{t.cifrado.ambos}</p>
 			</div>
 		</section>
 
-		<!-- Apps -->
-		<section id="apps" class="border-b border-[var(--line)] px-6 py-20">
-			<div class="mx-auto max-w-6xl">
-				<h2 class="font-display text-3xl font-bold text-[var(--ink)] sm:text-4xl">{t.apps.title}</h2>
-				<dl class="mt-10">
+		<section id="alcance" class="section" aria-labelledby="alcance-title">
+			<div class="container split">
+				<h2 id="alcance-title">{t.alcance.title}</h2>
+				<div class="prose">
+					{t.alcance.paragraphs.map((p) => (
+						<p>{p}</p>
+					))}
+				</div>
+			</div>
+		</section>
+
+		<section id="cifrado" class="section" aria-labelledby="cifrado-title">
+			<div class="container">
+				<header class="section-head">
+					<h2 id="cifrado-title">{t.cifrado.title}</h2>
+				</header>
+				<div class="cols">
+					{pairs(t.cifrado).map((c) => (
+						<div class:list={['col', `col--${c.tone}`]}>
+							<h3>{c.title}</h3>
+							<ul class="rows">
+								{c.items.map((i) => (
+									<li>{i}</li>
+								))}
+							</ul>
+						</div>
+					))}
+				</div>
+				<p class="callout">{t.cifrado.ambos}</p>
+			</div>
+		</section>
+
+		<section id="apps" class="section" aria-labelledby="apps-title">
+			<div class="container">
+				<header class="section-head">
+					<h2 id="apps-title">{t.apps.title}</h2>
+				</header>
+				<dl class="defs">
 					{t.apps.items.map((a) => (
-						<div class="step-row grid gap-1 py-5 sm:grid-cols-[0.6fr_1.4fr] sm:gap-6">
-							<dt class="font-display text-lg font-semibold text-[var(--ink)]">{a.title}</dt>
-							<dd class="text-[var(--pine)]">{a.desc}</dd>
+						<div>
+							<dt>{a.title}</dt>
+							<dd>{a.desc}</dd>
 						</div>
 					))}
 				</dl>
 			</div>
 		</section>
 
-		{pairs.slice(1).map(({ id, s }) => (
-			<section id={id} class="border-b border-[var(--line)] px-6 py-20">
-				<div class="mx-auto max-w-6xl">
-					<h2 class="font-display text-3xl font-bold text-[var(--ink)] sm:text-4xl">{s.title}</h2>
-					<div class="mt-10 grid gap-10 md:grid-cols-2">
-						{[s.meshcore, s.meshtastic].map((col) => (
-							<div>
-								<h3 class="font-display text-xl font-semibold text-[var(--ink)]">{col.title}</h3>
-								<ul class="mt-2">
-									{col.items.map((i) => <li class="step-row py-3 text-[var(--pine)]">{i}</li>)}
-								</ul>
-							</div>
-						))}
-					</div>
+		<section id="novedades" class="section" aria-labelledby="novedades-title">
+			<div class="container">
+				<header class="section-head">
+					<h2 id="novedades-title">{t.novedades.title}</h2>
+				</header>
+				<div class="cols">
+					{pairs(t.novedades).map((c) => (
+						<div class:list={['col', `col--${c.tone}`]}>
+							<h3>{c.title}</h3>
+							<ul class="rows">
+								{c.items.map((i) => (
+									<li>{i}</li>
+								))}
+							</ul>
+						</div>
+					))}
 				</div>
-			</section>
-		))}
+			</div>
+		</section>
 
-		<!-- FAQ -->
-		<section id="faq" class="border-b border-[var(--line)] px-6 py-20">
-			<div class="mx-auto max-w-6xl">
-				<h2 class="font-display text-3xl font-bold text-[var(--ink)] sm:text-4xl">{t.faq.title}</h2>
-				<div class="mt-10">
+		<section id="faq" class="section" aria-labelledby="faq-title">
+			<div class="container">
+				<header class="section-head">
+					<h2 id="faq-title">{t.faq.title}</h2>
+				</header>
+				<div class="faq">
 					{t.faq.items.map((f) => (
-						<details class="step-row group py-5">
-							<summary class="font-display cursor-pointer list-none text-lg font-semibold text-[var(--ink)]">
-								<span aria-hidden="true" class="mr-3 inline-block font-mono text-[var(--signal)] transition-transform group-open:rotate-45">+</span>{f.q}
+						<details>
+							<summary>
+								<span class="faq__mark mono" aria-hidden="true">
+									+
+								</span>
+								{f.q}
 							</summary>
-							<p class="mt-3 max-w-3xl pl-7 text-[var(--pine)]">{f.a}</p>
+							<p>{f.a}</p>
 						</details>
 					))}
 				</div>
 			</div>
 		</section>
 
-		<!-- CTA -->
-		<section id="comunidad" class="px-6 py-20">
-			<div class="mx-auto max-w-6xl">
-				<div class="spec-plate radar-plate relative flex flex-col gap-8 overflow-hidden p-8 sm:p-10 lg:flex-row lg:items-center lg:justify-between">
-					<RadarBackdrop />
-					<div class="max-w-lg">
-						<h2 class="font-display text-3xl font-bold text-[var(--ink)] sm:text-4xl">{t.cta.title}</h2>
-						<p class="mt-4 text-[var(--pine)]">{t.cta.body}</p>
+		<section class="section" aria-labelledby="cta-title">
+			<div class="container">
+				<div class="cta">
+					<div>
+						<h2 id="cta-title">{t.cta.title}</h2>
+						<p>{t.cta.body}</p>
 					</div>
-					<div class="flex shrink-0 flex-col gap-3 sm:flex-row sm:flex-wrap lg:flex-col lg:flex-nowrap [&>a]:whitespace-nowrap">
-						<a href={`${home}#configura`} class="btn-primary">{t.cta.primary}</a>
-						<a href="https://prmsh.com" class="btn-secondary" rel="noopener">{t.cta.sister}</a>
+					<div class="cta__actions">
+						<a class="btn btn--primary" href={`${home}#configura`}>
+							{t.cta.primary}
+						</a>
+						<a class="btn btn--secondary" {...linkAttrs('meshtastic')}>
+							{t.cta.sister}
+						</a>
 					</div>
 				</div>
-				<p class="mt-8 max-w-2xl text-xs text-[var(--pine-soft)]" set:html={t.sourceHtml} />
+				<p class="source" set:html={t.sourceHtml} />
 			</div>
 		</section>
 	</main>
@@ -216,30 +229,291 @@ const pairs = [
 </Layout>
 
 <style>
+	.intro {
+		padding-block: clamp(2rem, 1rem + 3.5vw, 4.5rem) var(--section-y);
+	}
+
+	.intro__eyebrow {
+		color: var(--c-accent-2);
+		margin-bottom: var(--s-5);
+	}
+
+	h1 {
+		font-size: var(--t-h1);
+		font-weight: 700;
+		line-height: 0.98;
+		letter-spacing: -0.025em;
+		font-variation-settings: 'opsz' 96;
+	}
+
+	.intro__lead {
+		margin-top: var(--s-6);
+		max-width: 44rem;
+		font-size: var(--t-lg);
+		line-height: 1.5;
+		color: var(--c-text-2);
+	}
+
+	.intro__checked {
+		margin-top: var(--s-4);
+		color: var(--c-text-2);
+	}
+
+	.cols {
+		display: grid;
+		gap: var(--s-7);
+	}
+
+	@media (min-width: 48rem) {
+		.cols {
+			grid-template-columns: 1fr 1fr;
+			gap: var(--s-8);
+		}
+	}
+
+	.col {
+		--tone: var(--c-accent-2);
+		display: grid;
+		gap: var(--s-4);
+		align-content: start;
+		padding-top: var(--s-4);
+		border-top: 2px solid var(--tone);
+	}
+
+	.col--mt {
+		--tone: var(--c-accent);
+	}
+
+	.col h3 {
+		font-size: var(--t-h3);
+	}
+
+	.bullets {
+		display: grid;
+		gap: var(--s-2);
+		color: var(--c-text-2);
+	}
+
+	.bullets li {
+		padding-left: var(--s-4);
+		position: relative;
+	}
+
+	.bullets li::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		top: 0.7em;
+		width: 6px;
+		height: 6px;
+		border: 1.5px solid var(--tone);
+		border-radius: 50%;
+	}
+
+	.rows {
+		border-top: 1px solid var(--c-border);
+	}
+
+	.rows li {
+		padding-block: var(--s-3);
+		border-bottom: 1px solid var(--c-border);
+		color: var(--c-text-2);
+	}
+
+	.callout {
+		margin-top: var(--s-7);
+		max-width: 44rem;
+		padding: var(--s-4) var(--s-5);
+		border: 1px solid var(--c-border-strong);
+		border-radius: var(--r-card);
+		background: var(--c-surface-2);
+	}
+
+	.callout :global(strong) {
+		color: var(--c-text);
+	}
+
+	.table-wrap {
+		overflow-x: auto;
+		overscroll-behavior-x: contain;
+	}
+
+	.compare {
+		width: 100%;
+		min-width: 40rem;
+		border-collapse: collapse;
+		text-align: left;
+		font-size: var(--t-sm);
+	}
+
 	.compare th,
 	.compare td {
-		border-top: 1px solid var(--line);
-		padding: 0.85rem 1rem 0.85rem 0;
+		padding: var(--s-3) var(--s-4) var(--s-3) 0;
+		border-top: 1px solid var(--c-border);
 		vertical-align: top;
 	}
+
 	.compare thead th {
 		border-top: 0;
-		font-family: var(--font-display);
-		font-size: 1.15rem;
-		font-weight: 700;
+		font-family: var(--f-display);
+		font-size: var(--t-lg);
+		font-weight: 650;
 	}
+
+	.th--mc {
+		color: var(--c-accent-2);
+	}
+
+	.th--mt {
+		color: var(--c-accent);
+	}
+
 	.compare tbody th {
-		color: var(--ink);
-		font-weight: 600;
 		width: 22%;
+		font-weight: 600;
 	}
+
 	.compare td {
-		color: var(--pine);
+		color: var(--c-text-2);
 	}
+
 	.compare tbody tr:last-child > * {
-		border-bottom: 1px solid var(--line);
+		border-bottom: 1px solid var(--c-border);
 	}
-	summary::-webkit-details-marker {
+
+	.split {
+		display: grid;
+		gap: var(--s-6);
+	}
+
+	@media (min-width: 64rem) {
+		.split {
+			grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+			gap: var(--s-8);
+		}
+	}
+
+	.split h2 {
+		font-size: var(--t-h2);
+	}
+
+	.prose {
+		display: grid;
+		gap: var(--s-4);
+		max-width: 40rem;
+		color: var(--c-text-2);
+	}
+
+	.defs {
+		margin: 0;
+		border-top: 1px solid var(--c-border);
+	}
+
+	.defs div {
+		display: grid;
+		gap: var(--s-1) var(--s-6);
+		padding-block: var(--s-5);
+		border-bottom: 1px solid var(--c-border);
+	}
+
+	@media (min-width: 48rem) {
+		.defs div {
+			grid-template-columns: 14rem 1fr;
+		}
+	}
+
+	.defs dt {
+		font-family: var(--f-display);
+		font-size: var(--t-lg);
+		font-weight: 650;
+	}
+
+	.defs dd {
+		margin: 0;
+		color: var(--c-text-2);
+		max-width: 48rem;
+	}
+
+	.faq {
+		border-top: 1px solid var(--c-border);
+	}
+
+	.faq details {
+		border-bottom: 1px solid var(--c-border);
+	}
+
+	.faq summary {
+		display: flex;
+		align-items: center;
+		gap: var(--s-3);
+		min-height: 44px;
+		padding-block: var(--s-4);
+		font-family: var(--f-display);
+		font-size: var(--t-lg);
+		font-weight: 650;
+		cursor: pointer;
+		list-style: none;
+	}
+
+	.faq summary::-webkit-details-marker {
 		display: none;
+	}
+
+	.faq__mark {
+		display: inline-block;
+		width: 1rem;
+		color: var(--c-accent-2);
+		font-size: var(--t-lg);
+		transition: transform 200ms var(--ease-out);
+	}
+
+	.faq details[open] .faq__mark {
+		transform: rotate(45deg);
+	}
+
+	.faq p {
+		max-width: 48rem;
+		padding: 0 0 var(--s-5) calc(1rem + var(--s-3));
+		color: var(--c-text-2);
+	}
+
+	.cta {
+		display: grid;
+		gap: var(--s-6);
+		padding: var(--s-6);
+		border: 1px solid var(--c-border-strong);
+		border-radius: var(--r-card);
+		background: var(--c-surface-2);
+	}
+
+	@media (min-width: 64rem) {
+		.cta {
+			grid-template-columns: 1fr auto;
+			align-items: center;
+			padding: var(--s-7);
+		}
+	}
+
+	.cta h2 {
+		font-size: var(--t-h2);
+	}
+
+	.cta p {
+		margin-top: var(--s-3);
+		max-width: var(--measure);
+		color: var(--c-text-2);
+	}
+
+	.cta__actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--s-3);
+	}
+
+	.source {
+		margin-top: var(--s-6);
+		max-width: 44rem;
+		font-size: var(--t-xs);
+		color: var(--c-text-2);
 	}
 </style>

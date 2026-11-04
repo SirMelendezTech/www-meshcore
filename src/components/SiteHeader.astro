@@ -1,117 +1,122 @@
 ---
-import { languages, mapPath, protocolsPath, ui, type Lang } from '../i18n/ui';
+import Wordmark from './Wordmark.astro';
+import MobileNav from './MobileNav.svelte';
+import ExternalIcon from './ExternalIcon.astro';
+import { links, linkAttrs } from '../config/links';
+import { homePath, mapPath, protocolsPath, ui, type Lang } from '../i18n/ui';
 
 interface Props {
 	lang: Lang;
-	// Prefix for the home section anchors: '' on the home page itself, the
-	// locale's home path on any other page so `#que-es` resolves back home.
-	base: string;
-	// Same page in the other locale, used by the language switch.
+	/** Same page in the other locale, used by the language switch. */
 	altHref: string;
-	ctaHref?: string;
 }
 
-const { lang, base, altHref, ctaHref = `${base}#configura` } = Astro.props;
+const { lang, altHref } = Astro.props;
 const t = ui[lang];
-const otherLang = (Object.keys(languages) as Lang[]).find((l) => l !== lang)!;
+const home = homePath[lang];
+// On the home page the section anchors stay on-page; elsewhere they lead home.
+const here = Astro.url.pathname.replace(/\/?$/, '/');
+const base = here === home ? '' : home;
+const current = (href: string) => (href === here ? ('page' as const) : undefined);
 
-// "Configura" is left out on purpose: the CTA button beside the nav (and at
-// the end of the mobile menu) already links there.
 // Sections of the home page, in page order.
-const sectionLinks = [
-	{ href: `${base}#que-es`, label: t.nav.queEs },
-	{ href: `${base}#hardware`, label: t.nav.hardware },
-	{ href: `${base}#roles`, label: t.nav.roles },
-	{ href: `${base}#unete`, label: t.nav.unete },
-	{ href: `${base}#comunidad`, label: t.nav.comunidad },
+const sections = [
+	{ label: t.nav.inicio, href: `${base}#inicio` },
+	{ label: t.nav.meshcore, href: `${base}#meshcore` },
+	{ label: t.nav.como, href: `${base}#como-funciona` },
+	{ label: t.nav.recursos, href: `${base}#recursos` },
+	{ label: t.nav.comunidad, href: `${base}#comunidad` },
 ];
-// Standalone pages, kept apart from the home sections so it's clear they leave the home page.
-const pageLinks = [
-	{ href: mapPath[lang], label: t.nav.mapa },
-	{ href: protocolsPath[lang], label: t.nav.protocolos },
+// Standalone pages, kept apart so it's clear they leave the home page.
+const pages = [
+	{ label: t.nav.mapa, href: mapPath[lang], 'aria-current': current(mapPath[lang]) },
+	{
+		label: t.nav.comparar,
+		href: protocolsPath[lang],
+		'aria-current': current(protocolsPath[lang]),
+	},
 ];
-
-const currentPath = Astro.url.pathname.replace(/\/?$/, '/');
-const isCurrent = (href: string) => !href.includes('#') && href.replace(/\/?$/, '/') === currentPath;
+const join = { label: t.nav.join, ...linkAttrs('discord') };
+const back = { label: t.nav.back, ...linkAttrs('prmsh') };
+const langSwitch = { label: t.switchTo.label, href: altHref, lang: t.switchTo.lang };
 ---
 
-<a href="#contenido" class="skip-link">{t.skipLink}</a>
+<!-- Family bar: where this site sits inside PRMSH, and the way back. Scrolls away. -->
+<div class="family">
+	<div class="container family__bar">
+		<nav aria-label="PRMSH" class="family__crumbs mono">
+			<ol>
+				<li>
+					<a href={links.prmsh.url} title={t.nav.back}>
+						PRMSH Community
+					</a>
+				</li>
+				<li aria-current="page">MeshCore Puerto Rico</li>
+			</ol>
+		</nav>
+		<a
+			class="family__lang mono"
+			href={langSwitch.href}
+			hreflang={langSwitch.lang}
+			lang={langSwitch.lang}
+			title={t.switchTo.title}
+			data-lang-switch
+		>
+			{langSwitch.label}
+		</a>
+	</div>
+</div>
 
-<header class="sticky top-0 z-50 border-b border-[var(--line)] bg-[var(--paper)]/95 backdrop-blur">
-	<nav class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
-		<a href={`${base}#top`} class="flex items-center gap-2.5">
-			<svg width="30" height="30" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-				<rect width="32" height="32" rx="6" fill="#141f18" />
-				<path d="M3 25.5c4.5-3.2 8-4.6 13-4.6s8.5 1.4 13 4.6" stroke="#3f5748" stroke-width="1.6" stroke-linecap="round" />
-				<path d="M6 19 16 9.5 26 15" stroke="#8fa696" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
-				<circle cx="6" cy="19" r="3" fill="#141f18" stroke="#8fa696" stroke-width="1.8" />
-				<circle cx="26" cy="15" r="3" fill="#141f18" stroke="#8fa696" stroke-width="1.8" />
-				<path d="M20.3 4.2a6.2 6.2 0 0 1 1.5 5" stroke="#e8824a" stroke-width="1.6" stroke-linecap="round" />
-				<circle cx="16" cy="9.5" r="3.4" fill="#e8824a" />
-			</svg>
-			<span class="font-display text-xl font-bold tracking-tight text-[var(--ink)]">
-				MeshCore<span class="text-[var(--signal)]">PR</span>
+<header class="header">
+	<div class="container header__bar">
+		<a class="header__brand" href={`${base}#inicio`} aria-label={t.a11y.home}>
+			<Wordmark />
+			<span class="header__name">
+				MeshCore <span>Puerto Rico</span>
 			</span>
 		</a>
-		<div class="hidden items-center gap-6 text-[0.95rem] xl:flex">
-			{sectionLinks.map((l) => <a href={l.href} class="nav-link">{l.label}</a>)}
-			<span class="h-5 w-px bg-[var(--line)]" aria-hidden="true"></span>
-			{pageLinks.map((l) => <a href={l.href} class="nav-link nav-link-page" aria-current={isCurrent(l.href) ? 'page' : undefined}>{l.label}</a>)}
+
+		<nav class="header__nav" aria-label={t.a11y.primaryNav}>
+			<ul>
+				{sections.map((item) => (
+					<li>
+						<a href={item.href}>{item.label}</a>
+					</li>
+				))}
+				<li class="header__rule" aria-hidden="true"></li>
+				{pages.map((item) => (
+					<li>
+						<a href={item.href} aria-current={item['aria-current']}>
+							{item.label}
+						</a>
+					</li>
+				))}
+			</ul>
+		</nav>
+
+		<a class="btn btn--primary header__cta" {...linkAttrs('discord')}>
+			{t.nav.join}
+			<ExternalIcon />
+			<span class="visually-hidden">{t.a11y.newTab}</span>
+		</a>
+
+		<div class="header__mobile">
+			<MobileNav
+				client:media="(max-width: 79.99rem)"
+				items={sections}
+				secondary={[...pages, back, langSwitch]}
+				cta={join}
+				desktopQuery="(min-width: 80rem)"
+				openLabel={t.a11y.menuOpen}
+				closeLabel={t.a11y.menuClose}
+				newTabLabel={t.a11y.newTab}
+				navLabel={t.a11y.primaryNav}
+			/>
 		</div>
-		<div class="flex items-center gap-4">
-			<a href={altHref} hreflang={otherLang} lang={otherLang} class="lang-switch" title={t.nav.switchLang} data-lang-switch>{otherLang.toUpperCase()}<span class="sr-only">, {t.nav.switchLang}</span></a>
-			<a href={ctaHref} class="btn-primary hidden px-4! py-2! text-sm xl:inline-flex">{t.nav.configura}</a>
-			<button
-				id="menu-toggle"
-				type="button"
-				class="nav-toggle xl:hidden"
-				aria-expanded="false"
-				aria-controls="mobile-menu"
-			>
-				<span class="sr-only">{t.nav.openMenu}</span>
-				<svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
-					<path d="M3 6h18M3 12h18M3 18h18" stroke="var(--ink)" stroke-width="2" stroke-linecap="round" />
-				</svg>
-			</button>
-		</div>
-	</nav>
-	<div id="mobile-menu" class="mobile-menu xl:hidden" hidden>
-		{pageLinks.map((l) => <a href={l.href} class="nav-link nav-link-page" aria-current={isCurrent(l.href) ? 'page' : undefined}>{l.label}</a>)}
-		<span class="my-1 h-px bg-[var(--line)]" aria-hidden="true"></span>
-		{sectionLinks.map((l) => <a href={l.href} class="nav-link">{l.label}</a>)}
-		<a href={ctaHref} class="btn-primary justify-center">{t.nav.configura}</a>
 	</div>
 </header>
 
 <script>
-	const toggle = document.getElementById('menu-toggle');
-	const menu = document.getElementById('mobile-menu');
-	if (toggle && menu) {
-		toggle.addEventListener('click', () => {
-			const open = menu.hasAttribute('hidden');
-			if (open) {
-				menu.removeAttribute('hidden');
-				toggle.setAttribute('aria-expanded', 'true');
-			} else {
-				menu.setAttribute('hidden', '');
-				toggle.setAttribute('aria-expanded', 'false');
-			}
-		});
-		document.addEventListener('keydown', (e) => {
-			if (e.key === 'Escape' && !menu.hasAttribute('hidden')) {
-				menu.setAttribute('hidden', '');
-				toggle.setAttribute('aria-expanded', 'false');
-				toggle.focus();
-			}
-		});
-		menu.querySelectorAll('a').forEach((link) =>
-			link.addEventListener('click', () => {
-				menu.setAttribute('hidden', '');
-				toggle.setAttribute('aria-expanded', 'false');
-			}),
-		);
-	}
-
 	// Keep the reader on the same section when switching languages; both
 	// locales share the same section ids.
 	document.querySelectorAll<HTMLAnchorElement>('[data-lang-switch]').forEach((link) =>
@@ -122,18 +127,176 @@ const isCurrent = (href: string) => !href.includes('#') && href.replace(/\/?$/, 
 </script>
 
 <style>
-	.skip-link {
-		position: absolute;
-		left: -9999px;
-		top: 0;
-		z-index: 100;
-		background: var(--signal);
-		color: var(--paper-raised);
-		padding: 0.75rem 1.25rem;
-		font-weight: 600;
+	.family {
+		border-bottom: 1px solid var(--c-border);
+		background: var(--c-surface);
 	}
-	.skip-link:focus {
-		left: 1rem;
-		top: 1rem;
+
+	.family__bar {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--s-4);
+	}
+
+	.family__crumbs ol {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		color: var(--c-text-2);
+	}
+
+	.family__crumbs li {
+		display: inline-flex;
+		align-items: center;
+	}
+
+	.family__crumbs li + li::before {
+		content: '/';
+		padding-inline: var(--s-2);
+		color: var(--c-border-strong);
+	}
+
+	.family__crumbs li[aria-current] {
+		color: var(--c-text);
+	}
+
+	.family__crumbs a,
+	.family__lang {
+		display: inline-flex;
+		align-items: center;
+		min-height: 44px;
+		color: var(--c-text-2);
+		text-decoration: underline;
+		text-decoration-color: var(--c-border-strong);
+		text-underline-offset: 4px;
+		transition: color 160ms var(--ease-out);
+	}
+
+	.family__lang {
+		text-decoration: none;
+	}
+
+	.family__crumbs a:hover,
+	.family__lang:hover {
+		color: var(--c-text);
+		text-decoration-color: var(--c-text);
+	}
+
+	.header {
+		position: sticky;
+		top: 0;
+		z-index: 50;
+		background: rgb(11 13 12 / 0.92);
+		border-bottom: 1px solid var(--c-border);
+		backdrop-filter: saturate(1.2) blur(8px);
+	}
+
+	.header__bar {
+		position: relative;
+		display: flex;
+		align-items: center;
+		gap: var(--s-6);
+		min-height: 4.25rem;
+	}
+
+	.header__brand {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.6rem;
+		min-height: 44px;
+		margin-right: auto;
+		text-decoration: none;
+		color: var(--c-text);
+	}
+
+	.header__name {
+		font-family: var(--f-display);
+		font-weight: 750;
+		font-size: 1.25rem;
+		letter-spacing: 0.01em;
+		font-variation-settings: 'opsz' 32;
+		line-height: 1;
+		white-space: nowrap;
+	}
+
+	.header__name span {
+		font-weight: 500;
+		color: var(--c-text-2);
+	}
+
+	.header__nav ul {
+		display: flex;
+		align-items: center;
+		gap: var(--s-1);
+	}
+
+	.header__nav a {
+		display: inline-flex;
+		align-items: center;
+		min-height: 44px;
+		padding-inline: var(--s-2);
+		color: var(--c-text-2);
+		text-decoration: none;
+		font-size: var(--t-sm);
+		font-weight: 500;
+		white-space: nowrap;
+		border-radius: var(--r-control);
+		transition: color 160ms var(--ease-out);
+	}
+
+	.header__nav a:hover,
+	.header__nav a[aria-current='page'] {
+		color: var(--c-text);
+	}
+
+	.header__nav a[aria-current='page'] {
+		text-decoration: underline;
+		text-decoration-color: var(--c-accent-2);
+		text-underline-offset: 6px;
+		text-decoration-thickness: 2px;
+	}
+
+	.header__rule {
+		width: 1px;
+		height: 1.25rem;
+		margin-inline: var(--s-2);
+		background: var(--c-border);
+	}
+
+	.header__cta {
+		min-height: 44px;
+		padding: 0.5rem 1rem;
+		font-size: var(--t-sm);
+		white-space: nowrap;
+	}
+
+	.header__mobile {
+		display: none;
+	}
+
+	@media (max-width: 79.99rem) {
+		.header__nav,
+		.header__cta {
+			display: none;
+		}
+
+		.header__mobile {
+			display: block;
+		}
+	}
+
+	/* Phones: the header already names this site, so the bar keeps only the way back. */
+	@media (max-width: 29.99rem) {
+		.family__crumbs li[aria-current] {
+			display: none;
+		}
+	}
+
+	/* Very narrow phones: keep the brand on one line. */
+	@media (max-width: 22.5rem) {
+		.header__name span {
+			display: none;
+		}
 	}
 </style>

@@ -1,0 +1,333 @@
+---
+import PathStepper from './PathStepper.svelte';
+import { ui, type Lang } from '../../i18n/ui';
+
+interface Props {
+	lang: Lang;
+}
+const { lang } = Astro.props;
+const h = ui[lang].how;
+const s = h.stepper;
+---
+
+<section id="como-funciona" class="section" aria-labelledby="how-title">
+	<div class="container">
+		<header class="section-head">
+			<h2 id="how-title">{h.title}</h2>
+			<p>{h.body}</p>
+		</header>
+
+		<ol class="steps">
+			<!-- 01 · Nodes and roles -->
+			<li class="step">
+				<div class="step__text">
+					<span class="step__n mono" aria-hidden="true">
+						01
+					</span>
+					<h3 id="step-1">{h.steps[0].title}</h3>
+					<p>{h.steps[0].body}</p>
+				</div>
+				<div class="step__detail">
+					<p class="step__lead">{h.nodeParts}</p>
+					<dl class="roles">
+						{h.roles.map((r, i) => (
+							<div class="role">
+								<dt>
+									<span
+										class:list={[
+											'role__key',
+											i === 1 ? 'role__key--repeater' : 'role__key--companion',
+										]}
+										aria-hidden="true"
+									/>
+									{r.title}
+								</dt>
+								<dd>{r.body}</dd>
+							</div>
+						))}
+					</dl>
+				</div>
+			</li>
+
+			<!-- 02 · Flood, then learned route -->
+			<li class="step">
+				<div class="step__text">
+					<span class="step__n mono" aria-hidden="true">
+						02
+					</span>
+					<h3 id="step-2">{h.steps[1].title}</h3>
+					<p>{h.steps[1].body}</p>
+				</div>
+				<figure class="step__detail diagram" aria-labelledby="stepper-title">
+					<div class="diagram__head">
+						<h4 id="stepper-title">{s.title}</h4>
+						<span class="flag">{s.flag}</span>
+					</div>
+					<PathStepper
+						client:visible
+						steps={s.steps}
+						labels={{
+							prev: s.prev,
+							next: s.next,
+							stepOf: s.stepOf,
+							legendCompanion: s.legendCompanion,
+							legendRepeater: s.legendRepeater,
+							legendTx: s.legendTx,
+							legendQuiet: s.legendQuiet,
+							pathLabel: s.pathLabel,
+							noPath: s.noPath,
+						}}
+					/>
+					<figcaption set:html={s.sourceHtml} />
+				</figure>
+			</li>
+
+			<!-- 03 · Radio settings and good practice -->
+			<li class="step">
+				<div class="step__text">
+					<span class="step__n mono" aria-hidden="true">
+						03
+					</span>
+					<h3 id="step-3">{h.steps[2].title}</h3>
+					<p>{h.steps[2].body}</p>
+				</div>
+				<div class="step__detail practice">
+					<div id="configura" class="spec">
+						<p class="spec__label mono">{h.presetLabel}</p>
+						<dl>
+							{h.specs.map((row) => (
+								<div>
+									<dt>{row.k}</dt>
+									<dd class="mono">{row.v}</dd>
+								</div>
+							))}
+						</dl>
+						<p class="spec__note" set:html={h.presetNoteHtml} />
+					</div>
+					<ul class="rules">
+						{h.responsible.map((r) => (
+							<li>
+								<h4>{r.title}</h4>
+								<p>{r.body}</p>
+							</li>
+						))}
+					</ul>
+				</div>
+			</li>
+		</ol>
+	</div>
+</section>
+
+<style>
+	.steps {
+		display: grid;
+		border-top: 1px solid var(--c-border);
+	}
+
+	.step {
+		display: grid;
+		gap: var(--s-6);
+		padding-block: var(--s-7);
+		border-bottom: 1px solid var(--c-border);
+	}
+
+	@media (min-width: 64rem) {
+		.step {
+			grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+			gap: var(--s-8);
+		}
+
+		.step__text {
+			position: sticky;
+			top: 6rem;
+			align-self: start;
+		}
+	}
+
+	.step__text {
+		display: grid;
+		grid-template-columns: 3rem 1fr;
+		gap: var(--s-2) var(--s-4);
+		align-content: start;
+	}
+
+	.step__n {
+		grid-row: span 2;
+		padding-top: 0.45rem;
+		color: var(--c-accent-2);
+	}
+
+	.step h3 {
+		font-size: var(--t-h3);
+	}
+
+	.step__text p {
+		color: var(--c-text-2);
+		max-width: 28rem;
+	}
+
+	.step h4 {
+		font-family: var(--f-display);
+		font-size: var(--t-lg);
+		font-weight: 650;
+		line-height: 1.2;
+		letter-spacing: -0.01em;
+	}
+
+	.step__lead {
+		margin-bottom: var(--s-5);
+		max-width: 40rem;
+	}
+
+	/* 01 roles */
+	.roles {
+		display: grid;
+		margin: 0;
+		border-top: 1px solid var(--c-border);
+	}
+
+	.role {
+		display: grid;
+		gap: var(--s-1) var(--s-5);
+		padding-block: var(--s-4);
+		border-bottom: 1px solid var(--c-border);
+	}
+
+	@media (min-width: 40rem) {
+		.role {
+			grid-template-columns: 11rem 1fr;
+		}
+	}
+
+	.role dt {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--s-3);
+		font-weight: 600;
+	}
+
+	.role dd {
+		margin: 0;
+		color: var(--c-text-2);
+	}
+
+	.role__key {
+		width: 12px;
+		height: 12px;
+		flex: none;
+		border: 2px solid var(--c-accent-2);
+	}
+
+	.role__key--companion {
+		border-radius: 50%;
+	}
+
+	/* 02 diagram */
+	.diagram {
+		margin: 0;
+		display: grid;
+		gap: var(--s-4);
+		padding: var(--s-5);
+		border: 1px solid var(--c-border);
+		border-radius: var(--r-card);
+		background: var(--c-surface);
+	}
+
+	.diagram__head {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--s-2) var(--s-4);
+	}
+
+	.diagram figcaption {
+		padding-top: var(--s-4);
+		border-top: 1px solid var(--c-border);
+		font-size: var(--t-sm);
+		color: var(--c-text-2);
+	}
+
+	/* 03 practice */
+	.practice {
+		display: grid;
+		gap: var(--s-6);
+	}
+
+	@media (min-width: 48rem) {
+		.practice {
+			grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+			align-items: start;
+		}
+	}
+
+	.spec {
+		padding: var(--s-5);
+		border: 1px solid var(--c-border-strong);
+		border-radius: var(--r-card);
+		background: var(--c-surface-2);
+		scroll-margin-top: 6rem;
+	}
+
+	.spec__label {
+		color: var(--c-accent-2);
+		margin-bottom: var(--s-4);
+	}
+
+	.spec dl {
+		display: grid;
+		margin: 0;
+	}
+
+	.spec dl div {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: var(--s-4);
+		padding-block: var(--s-2);
+		border-top: 1px solid var(--c-border);
+	}
+
+	.spec dt {
+		color: var(--c-text-2);
+		font-size: var(--t-sm);
+	}
+
+	.spec dd {
+		margin: 0;
+		font-size: var(--t-sm);
+		font-weight: 500;
+		text-align: right;
+	}
+
+	.spec__note {
+		margin-top: var(--s-4);
+		font-size: var(--t-xs);
+		color: var(--c-text-2);
+		line-height: 1.5;
+	}
+
+	.rules {
+		display: grid;
+		gap: var(--s-5);
+	}
+
+	.rules li {
+		display: grid;
+		gap: var(--s-1);
+		padding-left: var(--s-4);
+		border-left: 2px solid var(--c-border-strong);
+	}
+
+	.rules h4 {
+		font-size: var(--t-base);
+		font-family: var(--f-body);
+		font-weight: 600;
+		letter-spacing: 0;
+	}
+
+	.rules p {
+		color: var(--c-text-2);
+		font-size: var(--t-sm);
+	}
+</style>

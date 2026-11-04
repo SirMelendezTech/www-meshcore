@@ -1,84 +1,122 @@
 ---
+import '@fontsource-variable/bricolage-grotesque/opsz.css';
+import '@fontsource-variable/atkinson-hyperlegible-next/wght.css';
+import '@fontsource/ibm-plex-mono/latin-400.css';
+import '@fontsource/ibm-plex-mono/latin-500.css';
 import '../styles/global.css';
+import { links, site } from '../config/links';
 import { defaultLang, homePath, languages, ui, type Lang } from '../i18n/ui';
 
 interface Props {
 	lang?: Lang;
 	title?: string;
 	description?: string;
-	ogLocale?: string;
-	// This page's path in every locale, for hreflang alternates.
+	/** This page's path in every locale, for hreflang alternates. */
 	alternates?: Record<Lang, string>;
 }
 
 const { lang = defaultLang } = Astro.props;
+const t = ui[lang];
 const {
-	title = ui[lang].meta.title,
-	description = ui[lang].meta.description,
-	ogLocale = ui[lang].meta.ogLocale,
+	title = t.meta.title,
+	description = t.meta.description,
 	alternates = homePath,
 } = Astro.props;
 const locales = Object.keys(languages) as Lang[];
 
-const canonicalURL = new URL(Astro.url.pathname, Astro.site);
-const ogImageURL = new URL('/og.png', Astro.site);
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = new URL('/og.png', Astro.site).href;
+
+// A page of the PRMSH community site, not an organisation of its own.
+const jsonLd = {
+	'@context': 'https://schema.org',
+	'@type': 'WebSite',
+	name: site.name,
+	url: site.url,
+	inLanguage: t.lang,
+	description,
+	isPartOf: {
+		'@type': 'WebSite',
+		name: site.parent,
+		alternateName: site.parentDescriptor,
+		url: links.prmsh.url,
+	},
+	about: { '@type': 'Place', name: 'Puerto Rico' },
+};
 ---
 
 <!doctype html>
-<html lang={lang}>
+<html lang={t.lang}>
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="generator" content={Astro.generator} />
-
 		<title>{title}</title>
 		<meta name="description" content={description} />
-		<link rel="canonical" href={canonicalURL} />
+		<link rel="canonical" href={canonical} />
 		{locales.map((l) => (
-			<link rel="alternate" hreflang={l} href={new URL(alternates[l], Astro.site)} />
+			<link rel="alternate" hreflang={ui[l].lang} href={new URL(alternates[l], Astro.site).href} />
 		))}
-		<link rel="alternate" hreflang="x-default" href={new URL(alternates[defaultLang], Astro.site)} />
+		<link
+			rel="alternate"
+			hreflang="x-default"
+			href={new URL(alternates[defaultLang], Astro.site).href}
+		/>
+		<meta name="theme-color" content="#0B0D0C" />
+		<meta name="color-scheme" content="dark" />
 
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" />
-		<link rel="alternate icon" href="/favicon.ico?v=2" />
-		<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2" />
-		<link rel="manifest" href="/site.webmanifest?v=2" />
-		<meta name="theme-color" content="#141f18" />
+		<link rel="icon" href="/favicon.svg?v=3" type="image/svg+xml" />
+		<link rel="icon" href="/favicon.ico?v=3" sizes="32x32" />
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=3" />
+		<link rel="manifest" href="/site.webmanifest?v=3" />
+		<link rel="sitemap" href="/sitemap-index.xml" />
 
 		<meta property="og:type" content="website" />
-		<meta property="og:site_name" content="MeshCore Puerto Rico" />
+		<meta property="og:site_name" content={site.name} />
+		<meta property="og:locale" content={t.meta.ogLocale} />
+		{locales
+			.filter((l) => l !== lang)
+			.map((l) => (
+				<meta property="og:locale:alternate" content={ui[l].meta.ogLocale} />
+			))}
 		<meta property="og:title" content={title} />
 		<meta property="og:description" content={description} />
-		<meta property="og:url" content={canonicalURL} />
-		<meta property="og:image" content={ogImageURL} />
+		<meta property="og:url" content={canonical} />
+		<meta property="og:image" content={ogImage} />
 		<meta property="og:image:width" content="1200" />
 		<meta property="og:image:height" content="630" />
-		<meta property="og:locale" content={ogLocale} />
-		{locales.filter((l) => l !== lang).map((l) => (
-			<meta property="og:locale:alternate" content={ui[l].meta.ogLocale} />
-		))}
-
+		<meta property="og:image:alt" content={t.meta.ogImageAlt} />
 		<meta name="twitter:card" content="summary_large_image" />
 		<meta name="twitter:title" content={title} />
 		<meta name="twitter:description" content={description} />
-		<meta name="twitter:image" content={ogImageURL} />
+		<meta name="twitter:image" content={ogImage} />
+		<meta name="twitter:image:alt" content={t.meta.ogImageAlt} />
 
-		<script type="application/ld+json" set:html={JSON.stringify({
-			'@context': 'https://schema.org',
-			'@type': 'Organization',
-			name: 'MeshCore Puerto Rico',
-			url: 'https://meshcore.prmsh.com',
-			logo: new URL('/icon-512.png', Astro.site).toString(),
-			description,
-			inLanguage: lang,
-			areaServed: {
-				'@type': 'AdministrativeArea',
-				name: 'Puerto Rico',
-			},
-			sameAs: ['https://discord.gg/3v6rRhNRpD', 'https://prmsh.com'],
-		})} />
+		<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 	</head>
 	<body>
+		<a class="skip" href="#contenido">
+			{t.a11y.skip}
+		</a>
 		<slot />
 	</body>
 </html>
+
+<style>
+	.skip {
+		position: absolute;
+		left: var(--s-4);
+		top: var(--s-4);
+		z-index: 100;
+		padding: var(--s-3) var(--s-4);
+		background: var(--c-accent);
+		color: var(--c-on-accent);
+		font-weight: 600;
+		border-radius: var(--r-control);
+		transform: translateY(-200%);
+	}
+
+	.skip:focus {
+		transform: none;
+	}
+</style>
