@@ -9,6 +9,8 @@ interface Props {
 const { lang } = Astro.props;
 const t = ui[lang];
 const r = t.resources;
+// The guides are written in Spanish.
+const hreflang = lang === 'es' ? undefined : 'es';
 const onSiteHref: Record<string, string> = { mapa: mapPath[lang], comparar: protocolsPath[lang] };
 
 type Item = { id: LinkId; label: string; thirdParty?: boolean };
@@ -20,6 +22,31 @@ type Item = { id: LinkId; label: string; thirdParty?: boolean };
 			<h2 id="resources-title">{r.title}</h2>
 			<p>{r.body}</p>
 		</header>
+
+		<!-- Island-specific guides first: the most direct path from here to a working node. -->
+		<section class="guides" aria-labelledby="res-guides">
+			<div class="guides__text">
+				<h3 id="res-guides">{r.guides.title}</h3>
+				<p>{r.guides.body}</p>
+				<a class="inline-link guides__all" {...linkAttrs('guia')} hreflang={hreflang}>
+					{r.guides.all}
+				</a>
+			</div>
+			<ul class="guides__list">
+				{r.guides.items.map((g) => (
+					<li>
+						<a {...linkAttrs(g.id)} hreflang={hreflang}>
+							<span class="guides__label">{g.label}</span>
+							<span class="guides__body">{g.body}</span>
+							<span class="guides__open mono">
+								{r.guides.open}
+								<span class="visually-hidden">: {g.label}</span>
+							</span>
+						</a>
+					</li>
+				))}
+			</ul>
+		</section>
 
 		<div class="cols">
 			{r.groups.map((g) => (
@@ -84,6 +111,96 @@ type Item = { id: LinkId; label: string; thirdParty?: boolean };
 </section>
 
 <style>
+	.guides {
+		display: grid;
+		gap: var(--s-5);
+		margin-bottom: var(--s-8);
+		padding: var(--s-5);
+		border: 1px solid var(--c-border-strong);
+		border-radius: var(--r-card);
+		background: var(--c-surface);
+	}
+
+	@media (min-width: 64rem) {
+		.guides {
+			grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+			gap: var(--s-7);
+			padding: var(--s-6);
+		}
+	}
+
+	.guides__text {
+		display: grid;
+		gap: var(--s-3);
+		align-content: start;
+	}
+
+	.guides h3 {
+		font-size: var(--t-h3);
+	}
+
+	.guides__text p {
+		color: var(--c-text-2);
+	}
+
+	.guides__all {
+		display: inline-flex;
+		align-items: center;
+		justify-self: start;
+		min-height: 44px;
+		font-weight: 600;
+	}
+
+	.guides__list {
+		display: grid;
+		gap: var(--s-4);
+	}
+
+	@media (min-width: 48rem) {
+		.guides__list {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+
+	.guides__list a {
+		display: grid;
+		grid-template-rows: auto 1fr auto;
+		gap: var(--s-2);
+		height: 100%;
+		padding: var(--s-5);
+		border: 1px solid var(--c-border);
+		border-top: 2px solid var(--c-accent-2);
+		border-radius: var(--r-card);
+		background: var(--c-bg);
+		text-decoration: none;
+		transition: border-color 200ms var(--ease-out);
+	}
+
+	.guides__list a:hover {
+		border-color: var(--c-accent-2);
+	}
+
+	.guides__label {
+		font-family: var(--f-display);
+		font-size: var(--t-lg);
+		font-weight: 650;
+		color: var(--c-text);
+	}
+
+	.guides__body {
+		color: var(--c-text-2);
+		font-size: var(--t-sm);
+	}
+
+	.guides__open {
+		color: var(--c-accent-2);
+	}
+
+	.guides__list a:hover .guides__open {
+		text-decoration: underline;
+		text-underline-offset: 4px;
+	}
+
 	.cols {
 		display: grid;
 		gap: var(--s-7);

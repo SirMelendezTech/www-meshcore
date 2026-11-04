@@ -29,13 +29,14 @@
 	let i = $state(0);
 	const total = $derived(steps.length);
 
-	// A ridge with two high repeaters (A1, D2) and one in the valley (7C).
+	// A ridge with two high repeaters (A1C0, D27B) and one in the valley (7C19).
+	// IDs are 2 bytes, the path hash size the island mesh uses.
 	const N = [
 		{ x: 36, y: 108, id: 'A', kind: 'companion' },
-		{ x: 128, y: 74, id: '3F', kind: 'repeater' },
-		{ x: 236, y: 44, id: 'A1', kind: 'repeater' },
-		{ x: 300, y: 102, id: '7C', kind: 'repeater' },
-		{ x: 392, y: 52, id: 'D2', kind: 'repeater' },
+		{ x: 128, y: 74, id: '3F2A', kind: 'repeater' },
+		{ x: 236, y: 44, id: 'A1C0', kind: 'repeater' },
+		{ x: 300, y: 102, id: '7C19', kind: 'repeater' },
+		{ x: 392, y: 52, id: 'D27B', kind: 'repeater' },
 		{ x: 452, y: 114, id: 'C', kind: 'companion' },
 		{ x: 526, y: 100, id: 'B', kind: 'companion' },
 	] as const;
@@ -70,7 +71,7 @@
 		path: string | null;
 		pathBroken?: boolean;
 	};
-	const pathText = '3F › A1 › D2';
+	const pathText = '3F2A › A1C0 › D27B';
 	const frames: Frame[] = [
 		{ tx: [0, 1, 2, 3, 4], quiet: [5], edges: reach, edgeKind: 'flood', path: null },
 		{ tx: [6], quiet: [], edges: route, edgeKind: 'route', path: pathText },

@@ -12,6 +12,9 @@ export type LinkId =
 	| 'prmsh'
 	| 'meshtastic'
 	| 'meshcore'
+	| 'guia'
+	| 'guiaCompanion'
+	| 'guiaRepeater'
 	| 'corescope'
 	// Community channels (shared by all of PRMSH)
 	| 'discord'
@@ -50,6 +53,20 @@ export const links = {
 		id: 'meshcore',
 		url: 'https://meshcore.prmsh.com/',
 		display: 'meshcore.prmsh.com',
+		external: false,
+	},
+	// Node setup guides for the island mesh (Spanish only). Hash-routed pages.
+	guia: { id: 'guia', url: 'https://guia.prmsh.com/', display: 'guia.prmsh.com', external: false },
+	guiaCompanion: {
+		id: 'guiaCompanion',
+		url: 'https://guia.prmsh.com/#/meshcore-companion-pr.md',
+		display: 'guia.prmsh.com',
+		external: false,
+	},
+	guiaRepeater: {
+		id: 'guiaRepeater',
+		url: 'https://guia.prmsh.com/#/meshcore-repeater-roomserver-pr.md',
+		display: 'guia.prmsh.com',
 		external: false,
 	},
 	corescope: {

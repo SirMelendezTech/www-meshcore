@@ -61,7 +61,7 @@ const channels = [
 						<span class="mono" aria-hidden="true">
 							{String(i + 1).padStart(2, '0')}
 						</span>
-						<p>{s}</p>
+						<p set:html={s} />
 					</li>
 				))}
 			</ol>

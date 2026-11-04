@@ -1,5 +1,6 @@
 ---
 import PathStepper from './PathStepper.svelte';
+import { linkAttrs } from '../../config/links';
 import { ui, type Lang } from '../../i18n/ui';
 
 interface Props {
@@ -42,7 +43,17 @@ const s = h.stepper;
 									/>
 									{r.title}
 								</dt>
-								<dd>{r.body}</dd>
+								<dd>
+									{r.body}
+									<a
+										class="inline-link role__guide"
+										{...linkAttrs(r.guide)}
+										hreflang={lang === 'es' ? undefined : 'es'}
+									>
+										{h.guideLink}
+										<span class="visually-hidden">: {r.title}</span>
+									</a>
+								</dd>
 							</div>
 						))}
 					</dl>
@@ -101,6 +112,13 @@ const s = h.stepper;
 									<dd class="mono">{row.v}</dd>
 								</div>
 							))}
+						</dl>
+						<p class="spec__label spec__label--island mono">{h.islandLabel}</p>
+						<dl>
+							<div>
+								<dt>{h.island.k}</dt>
+								<dd class="mono">{h.island.v}</dd>
+							</div>
 						</dl>
 						<p class="spec__note" set:html={h.presetNoteHtml} />
 					</div>
@@ -209,6 +227,24 @@ const s = h.stepper;
 	.role dd {
 		margin: 0;
 		color: var(--c-text-2);
+	}
+
+	.role__guide {
+		display: inline-flex;
+		align-items: center;
+		min-height: 44px;
+		margin-top: var(--s-1);
+		font-size: var(--t-sm);
+		font-weight: 600;
+	}
+
+	.role dd {
+		display: grid;
+		justify-items: start;
+	}
+
+	.spec__label--island {
+		margin-top: var(--s-5);
 	}
 
 	.role__key {

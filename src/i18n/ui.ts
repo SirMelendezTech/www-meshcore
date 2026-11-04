@@ -157,16 +157,20 @@ const es = {
 			{
 				title: 'Companion',
 				body: 'Tu radio personal. Se conecta a la app por Bluetooth o a la app web por USB. No retransmite mensajes de otros.',
+				guide: 'guiaCompanion' as const,
 			},
 			{
 				title: 'Repetidor',
 				body: 'Extiende el alcance de todos retransmitiendo paquetes. Rinde más en un punto alto. Se configura por USB o a distancia desde la app.',
+				guide: 'guiaRepeater' as const,
 			},
 			{
 				title: 'Room server',
 				body: 'Un tablón compartido, al estilo BBS. Guarda publicaciones y, al entrar, te entrega hasta 32 mensajes que no has visto.',
+				guide: 'guiaRepeater' as const,
 			},
 		],
+		guideLink: 'Guía de configuración',
 		stepper: {
 			title: 'Un mensaje directo, de A a B',
 			prev: 'Anterior',
@@ -208,7 +212,9 @@ const es = {
 			{ k: 'Tasa de codificación', v: preset.cr },
 			{ k: 'Banda', v: `${preset.band} ISM` },
 		],
-		presetNoteHtml: `Valores del preset «USA» de la lista oficial de MeshCore, el que usa la red de la isla. Confírmalos en la app antes de transmitir: la lista puede cambiar. ${linkHtml('mcFaq', 'Más sobre ajustes de radio', NEW_TAB_ES)}.`,
+		islandLabel: 'Ajuste de la malla de la isla',
+		island: { k: 'Path hash', v: '2 bytes' },
+		presetNoteHtml: `Valores del preset «USA» de la lista oficial de MeshCore. La malla de Puerto Rico añade el path hash de 2 bytes para que dos repetidores no compartan el mismo identificador; lo explica la ${linkHtml('guiaCompanion', 'guía de Companion', NEW_TAB_ES)}. Confírmalos en la app antes de transmitir: pueden cambiar.`,
 		responsible: [
 			{
 				title: 'Usa hardware de 915 MHz',
@@ -234,6 +240,24 @@ const es = {
 		body: 'Accede a documentación y herramientas que te ayuden a entender y utilizar MeshCore.',
 		thirdParty: 'Terceros',
 		official: 'Oficial',
+		guides: {
+			title: 'Guías de la malla de Puerto Rico',
+			body: 'Paso a paso para configurar tu nodo con los valores de la isla. Las escribe y mantiene la comunidad PRMSH.',
+			open: 'Abrir guía',
+			all: 'Ver todas las guías',
+			items: [
+				{
+					id: 'guiaCompanion' as const,
+					label: 'Companion',
+					body: 'Nodo portátil conectado a tu teléfono por BLE, USB o WiFi.',
+				},
+				{
+					id: 'guiaRepeater' as const,
+					label: 'Repeater y Room Server',
+					body: 'Infraestructura fija: el repeater extiende la cobertura y el room server guarda mensajes para un grupo.',
+				},
+			],
+		},
 		groups: [
 			{
 				id: 'documentation',
@@ -332,7 +356,7 @@ const es = {
 		join: {
 			title: 'Para entrar a la red MeshCore de la isla',
 			steps: [
-				'Configura tu radio con el preset «USA».',
+				`Configura tu radio siguiendo la ${linkHtml('guiaCompanion', 'guía de Companion', NEW_TAB_ES)}.`,
 				'Pide en Discord el canal público vigente. No lo publicamos aquí para que nunca quede desactualizado.',
 				'Agrégalo en tu app y saluda.',
 				'Si montas un repetidor, avisa dónde quedó para coordinar la cobertura.',
@@ -352,6 +376,7 @@ const es = {
 		description:
 			'Un espacio para aprender, experimentar y conectar alrededor de MeshCore en Puerto Rico.',
 		family: 'PRMSH',
+		guides: 'Guías de nodos',
 		site: 'Este sitio',
 		community: 'Comunidad',
 		legal:
@@ -524,16 +549,20 @@ const en: Dictionary = {
 			{
 				title: 'Companion',
 				body: "Your personal radio. It connects to the app over Bluetooth or to the web app over USB. It doesn't relay other people's messages.",
+				guide: 'guiaCompanion' as const,
 			},
 			{
 				title: 'Repeater',
 				body: "Extends everyone's range by relaying packets. Works best on high ground. Configured over USB or remotely from the app.",
+				guide: 'guiaRepeater' as const,
 			},
 			{
 				title: 'Room server',
 				body: "A shared, BBS-style board. It stores posts and, when you log in, delivers up to 32 messages you haven't seen.",
+				guide: 'guiaRepeater' as const,
 			},
 		],
+		guideLink: 'Setup guide (in Spanish)',
 		stepper: {
 			title: 'One direct message, from A to B',
 			prev: 'Previous',
@@ -575,7 +604,9 @@ const en: Dictionary = {
 			{ k: 'Coding rate', v: preset.cr },
 			{ k: 'Band', v: `${preset.band} ISM` },
 		],
-		presetNoteHtml: `Values of the “USA” preset from MeshCore’s official list, the one the island network uses. Confirm them in the app before transmitting: the list can change. ${linkHtml('mcFaq', 'More on radio settings', NEW_TAB_EN)}.`,
+		islandLabel: 'Island mesh setting',
+		island: { k: 'Path hash', v: '2 bytes' },
+		presetNoteHtml: `Values of the “USA” preset from MeshCore’s official list. Puerto Rico’s mesh adds a 2-byte path hash so no two repeaters share the same identifier; the ${linkHtml('guiaCompanion', 'Companion guide', NEW_TAB_EN)} (in Spanish) explains why. Confirm them in the app before transmitting: they can change.`,
 		responsible: [
 			{
 				title: 'Use 915 MHz hardware',
@@ -601,6 +632,24 @@ const en: Dictionary = {
 		body: 'Documentation and tools to help you understand and use MeshCore.',
 		thirdParty: 'Third party',
 		official: 'Official',
+		guides: {
+			title: "Guides for Puerto Rico's mesh",
+			body: 'Step-by-step setup for your node with the island’s settings. Written and maintained by the PRMSH community, in Spanish.',
+			open: 'Open guide',
+			all: 'See all guides',
+			items: [
+				{
+					id: 'guiaCompanion' as const,
+					label: 'Companion',
+					body: 'Portable node connected to your phone over BLE, USB or Wi-Fi.',
+				},
+				{
+					id: 'guiaRepeater' as const,
+					label: 'Repeater and Room Server',
+					body: 'Fixed infrastructure: the repeater extends coverage and the room server stores messages for a group.',
+				},
+			],
+		},
 		groups: [
 			{
 				id: 'documentation',
@@ -699,7 +748,7 @@ const en: Dictionary = {
 		join: {
 			title: "To join the island's MeshCore network",
 			steps: [
-				'Set up your radio with the “USA” preset.',
+				`Set up your radio following the ${linkHtml('guiaCompanion', 'Companion guide', NEW_TAB_EN)} (in Spanish).`,
 				"Ask on Discord for the current public channel. We don't post it here so it never goes stale.",
 				'Add it in your app and say hello.',
 				'If you put up a repeater, share where it is so coverage can be coordinated.',
@@ -718,6 +767,7 @@ const en: Dictionary = {
 	footer: {
 		description: 'A place to learn, experiment and connect around MeshCore in Puerto Rico.',
 		family: 'PRMSH',
+		guides: 'Node guides',
 		site: 'This site',
 		community: 'Community',
 		legal:
