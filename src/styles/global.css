@@ -125,6 +125,11 @@
 		color: var(--ink);
 	}
 
+	/* Standalone pages read a step stronger than the home-section anchors. */
+	.nav-link-page {
+		color: var(--ink);
+	}
+
 	.nav-link[aria-current="page"] {
 		text-decoration: underline;
 		text-decoration-color: var(--signal);
