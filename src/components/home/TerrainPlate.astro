@@ -1,0 +1,505 @@
+---
+/**
+ * Hero plate. Same terrain, graticule and annotation system as prmsh.com's
+ * TerrainPlate (portada-prmsh/src/components/TerrainPlate.astro). The
+ * overlay is MeshCore-specific: one load sequence shows a direct message
+ * flooding through repeaters, then the learned route it keeps using.
+ * The final state is static; reduced motion shows it immediately.
+ */
+import DecryptedText from '../svelte-bits/DecryptedText.svelte';
+import { MAP_W, MAP_H, project, percent, dms } from '../../lib/map';
+import { nodes, flood, learnedRoute } from '../../data/illustrative-network';
+import { mapPath, ui, type Lang } from '../../i18n/ui';
+
+interface Props {
+	lang: Lang;
+}
+const { lang } = Astro.props;
+const m = ui[lang].plate;
+
+const byId = Object.fromEntries(nodes.map((n) => [n.id, { ...n, ...project(n) }]));
+const seg = ([a, b]: [string, string]) => ({ a: byId[a], b: byId[b] });
+
+const START_MS = 900;
+const WAVE_MS = 600;
+const waves = Math.max(...flood.map((f) => f.wave)) + 1;
+// The learned route is drawn once the flood has settled.
+const PATH_MS = START_MS + waves * WAVE_MS + 500;
+const PATH_HOP_MS = 320;
+
+// When each node first hears the packet (wave index + 1; the sender is 0).
+const heard = new Map<string, number>([[learnedRoute[0], 0]]);
+for (const { wave, link } of flood) if (!heard.has(link[1])) heard.set(link[1], wave + 1);
+
+const routeSegs = learnedRoute.slice(1).map((id, i) => seg([learnedRoute[i], id]));
+const R = 8;
+
+// Real graticule: every 30′ of longitude, every 30′ of latitude.
+const lons = [-67, -66.5, -66, -65.5];
+const lats = [18, 18.5];
+const lonLines = lons.map((lon) => ({ lon, x: project({ lat: 18, lon }).x }));
+const latLines = lats.map((lat) => ({ lat, y: project({ lat, lon: -66 }).y }));
+
+const regions = [
+	{ text: m.regions.cordillera, lat: 18.235, lon: -66.93, minor: false },
+	{ text: m.regions.north, lat: 18.405, lon: -66.42, minor: true },
+	{ text: m.regions.south, lat: 17.985, lon: -66.33, minor: true },
+	{ text: m.regions.luquillo, lat: 18.385, lon: -65.8, minor: true },
+];
+---
+
+<figure class="plate" aria-labelledby="plate-caption" style={`--path: ${PATH_MS}ms`}>
+	<div class="plate__head mono">
+		{m.annotations.map((a, i) => (
+			<span class="plate__annot">
+				<DecryptedText client:visible text={a} delay={START_MS + i * 260} />
+			</span>
+		))}
+		<span class="plate__band">{m.band}</span>
+		<span class="flag">{m.flag}</span>
+	</div>
+
+	<div class="plate__map" style={`--ar: ${MAP_W} / ${MAP_H}`} role="img" aria-label={m.label}>
+		<!-- A CSS background so only the active theme's relief is downloaded. -->
+		<div class="plate__terrain"></div>
+
+		<svg
+			class="plate__overlay"
+			viewBox={`0 0 ${MAP_W} ${MAP_H}`}
+			aria-hidden="true"
+			focusable="false"
+		>
+			<g class="grat">
+				{lonLines.map((l) => (
+					<line x1={l.x} y1="0" x2={l.x} y2={MAP_H} />
+				))}
+				{latLines.map((l) => (
+					<line x1="0" y1={l.y} x2={MAP_W} y2={l.y} />
+				))}
+			</g>
+
+			<!-- Radio reach between nodes: dashed so it never reads as a surveyed path. -->
+			<g class="links">
+				{flood.map(({ link }) => {
+					const { a, b } = seg(link);
+					return <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} />;
+				})}
+			</g>
+
+			<!-- 1. First message floods, wave by wave. -->
+			<g class="flood">
+				{flood.map(({ wave, link }) => {
+					const { a, b } = seg(link);
+					return (
+						<line
+							x1={a.x}
+							y1={a.y}
+							x2={b.x}
+							y2={b.y}
+							pathLength="1"
+							style={`--d: ${START_MS + wave * WAVE_MS}ms; --dur: ${WAVE_MS}ms`}
+						/>
+					);
+				})}
+			</g>
+
+			<!-- 2. Later messages follow the learned route only. -->
+			<g class="route">
+				{routeSegs.map(({ a, b }, i) => (
+					<line
+						x1={a.x}
+						y1={a.y}
+						x2={b.x}
+						y2={b.y}
+						pathLength="1"
+						style={`--d: ${PATH_MS + i * PATH_HOP_MS}ms; --dur: ${PATH_HOP_MS}ms`}
+					/>
+				))}
+			</g>
+
+			<g class="nodes">
+				{nodes.map((n) => {
+					const p = byId[n.id];
+					const t = heard.get(n.id);
+					return (
+						<g>
+							{t !== undefined && t > 0 && (
+								<circle
+									class="ping"
+									cx={p.x}
+									cy={p.y}
+									r={R + 1}
+									style={`--d: ${START_MS + (t - 1) * WAVE_MS + WAVE_MS}ms`}
+								/>
+							)}
+							{n.kind === 'repeater' ? (
+								<rect class="node" x={p.x - R} y={p.y - R} width={R * 2} height={R * 2} />
+							) : (
+								<circle class="node" cx={p.x} cy={p.y} r={R} />
+							)}
+						</g>
+					);
+				})}
+			</g>
+		</svg>
+
+		{lonLines.map((l) => (
+			<span
+				class="tick tick--lon mono"
+				style={`left: ${((l.x / MAP_W) * 100).toFixed(2)}%`}
+				aria-hidden="true"
+			>
+				{dms(l.lon)}
+				{lang === 'es' ? 'O' : 'W'}
+			</span>
+		))}
+		{latLines.map((l) => (
+			<span
+				class="tick tick--lat mono"
+				style={`top: ${((l.y / MAP_H) * 100).toFixed(2)}%`}
+				aria-hidden="true"
+			>
+				{dms(l.lat)}N
+			</span>
+		))}
+
+		{regions.map((r) => (
+			<span class:list={['region', { 'is-minor': r.minor }]} style={percent(r)} aria-hidden="true">
+				{r.text}
+			</span>
+		))}
+
+		{nodes.map((n) => (
+			<span
+				class:list={['label', `label--${n.anchor}`, { 'is-minor': n.minor }]}
+				style={percent(n)}
+				aria-hidden="true"
+			>
+				{n.id === 'punta' ? (
+					<>
+						{n.label}
+						<span class="mono label__meta">1338 m</span>
+					</>
+				) : (
+					n.label
+				)}
+			</span>
+		))}
+	</div>
+
+	<figcaption class="plate__foot" id="plate-caption">
+		<ul class="legend mono">
+			<li>
+				<span class="key key--companion" aria-hidden="true"></span>
+				{m.legendCompanion}
+			</li>
+			<li>
+				<span class="key key--repeater" aria-hidden="true"></span>
+				{m.legendRepeater}
+			</li>
+			<li>
+				<span class="key key--flood" aria-hidden="true"></span>
+				{m.legendFlood}
+			</li>
+			<li>
+				<span class="key key--route" aria-hidden="true"></span>
+				{m.legendPath}
+			</li>
+			<li>
+				<span class="key key--contour" aria-hidden="true"></span>
+				{m.legendContour}
+			</li>
+		</ul>
+		<p class="disclaimer">
+			{m.disclaimer}
+			<a class="inline-link" href={mapPath[lang]}>
+				{m.mapLink}
+			</a>
+			.
+		</p>
+	</figcaption>
+</figure>
+
+<style>
+	.plate {
+		margin: 0;
+		border: 1px solid var(--c-border);
+		background: var(--c-bg);
+		border-radius: var(--r-card);
+	}
+
+	.plate__head {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--s-2) var(--s-5);
+		padding: var(--s-3) var(--s-4);
+		border-bottom: 1px solid var(--c-border);
+		color: var(--c-text-2);
+	}
+
+	.plate__annot:first-child {
+		color: var(--c-text);
+		font-weight: 500;
+	}
+
+	.plate__band {
+		margin-left: auto;
+		color: var(--c-accent-2);
+	}
+
+	.plate__map {
+		position: relative;
+		aspect-ratio: var(--ar);
+		margin: clamp(0.75rem, 2.5vw, 2.25rem);
+	}
+
+	.plate__terrain {
+		background: var(--terrain) center / 100% 100% no-repeat;
+	}
+
+	.plate__terrain,
+	.plate__overlay {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+	}
+
+	.grat line {
+		stroke: var(--c-border);
+		stroke-width: 1;
+		stroke-dasharray: 2 6;
+	}
+
+	.links line {
+		stroke: var(--c-accent-2);
+		stroke-opacity: 0.35;
+		stroke-width: 2;
+		stroke-dasharray: 6 7;
+		stroke-linecap: round;
+	}
+
+	/* Flood: each link lights up in its wave, then the whole flood steps back. */
+	.flood {
+		animation: settle 700ms var(--ease-out) var(--path) forwards;
+	}
+
+	.flood line {
+		stroke: var(--c-accent-2);
+		stroke-width: 2.5;
+		stroke-linecap: round;
+		stroke-dasharray: 1 1;
+		stroke-dashoffset: 1;
+		animation: draw var(--dur) linear var(--d) forwards;
+	}
+
+	.route line {
+		stroke: var(--c-accent);
+		stroke-width: 3.5;
+		stroke-linecap: round;
+		stroke-dasharray: 1 1;
+		stroke-dashoffset: 1;
+		animation: draw var(--dur) var(--ease-out) var(--d) forwards;
+	}
+
+	.node {
+		fill: var(--c-bg);
+		stroke: var(--c-accent-2);
+		stroke-width: 3.5;
+	}
+
+	.ping {
+		fill: none;
+		stroke: var(--c-accent-2);
+		stroke-width: 2.5;
+		opacity: 0;
+		transform-box: fill-box;
+		transform-origin: center;
+		animation: ping 900ms var(--ease-out) var(--d) forwards;
+	}
+
+	@keyframes draw {
+		to {
+			stroke-dashoffset: 0;
+		}
+	}
+
+	@keyframes settle {
+		to {
+			opacity: 0.4;
+		}
+	}
+
+	@keyframes ping {
+		0% {
+			opacity: 0.9;
+			transform: scale(1);
+		}
+		100% {
+			opacity: 0;
+			transform: scale(3);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.flood {
+			animation: none;
+			opacity: 0.4;
+		}
+
+		.flood line,
+		.route line {
+			animation: none;
+			stroke-dashoffset: 0;
+		}
+
+		.ping {
+			display: none;
+		}
+	}
+
+	/* HTML annotations over the map */
+	.tick,
+	.region,
+	.label {
+		position: absolute;
+		pointer-events: none;
+		white-space: nowrap;
+	}
+
+	.tick {
+		color: var(--c-text-3);
+		font-size: 0.6875rem;
+	}
+
+	.tick--lon {
+		top: 0;
+		transform: translate(4px, -2px);
+	}
+
+	.tick--lat {
+		right: 0;
+		transform: translate(0, -125%);
+	}
+
+	.region {
+		transform: translate(-50%, -50%);
+		font-family: var(--f-display);
+		font-size: clamp(0.6875rem, 0.55rem + 0.45vw, 0.875rem);
+		font-weight: 450;
+		letter-spacing: 0.06em;
+		color: var(--c-region);
+		text-shadow: 0 0 6px var(--c-bg);
+	}
+
+	.label {
+		font-size: clamp(0.6875rem, 0.6rem + 0.3vw, 0.8125rem);
+		font-weight: 600;
+		color: var(--c-text);
+		line-height: 1.25;
+		text-shadow:
+			0 0 4px var(--c-bg),
+			0 0 8px var(--c-bg);
+	}
+
+	.label__meta {
+		display: block;
+		font-size: 0.6875rem;
+		font-weight: 400;
+		color: var(--c-text); /* sits on the highest relief band; blue falls below 4.5:1 there */
+	}
+
+	.label--n {
+		transform: translate(-50%, calc(-100% - 12px));
+		text-align: center;
+	}
+	.label--s {
+		transform: translate(-50%, 12px);
+		text-align: center;
+	}
+	.label--w {
+		transform: translate(calc(-100% - 12px), -50%);
+	}
+	.label--e {
+		transform: translate(12px, -50%);
+	}
+
+	@media (max-width: 47.99rem) {
+		.is-minor,
+		.tick,
+		.region {
+			display: none;
+		}
+
+		/* West-anchored labels would run off the plate on narrow screens. */
+		.label--w {
+			transform: translate(-30%, 10px);
+		}
+
+		.plate__map {
+			margin: var(--s-3) var(--s-2);
+		}
+	}
+
+	.plate__foot {
+		display: grid;
+		gap: var(--s-3);
+		padding: var(--s-4);
+		border-top: 1px solid var(--c-border);
+	}
+
+	.legend {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--s-2) var(--s-5);
+		color: var(--c-text-2);
+	}
+
+	.legend li {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--s-2);
+	}
+
+	.key {
+		display: inline-block;
+		flex: none;
+	}
+
+	.key--companion {
+		width: 11px;
+		height: 11px;
+		border-radius: 50%;
+		border: 2px solid var(--c-accent-2);
+	}
+
+	.key--repeater {
+		width: 11px;
+		height: 11px;
+		border: 2px solid var(--c-accent-2);
+	}
+
+	.key--flood {
+		width: 22px;
+		border-top: 2px solid var(--c-accent-2-mid);
+	}
+
+	.key--route {
+		width: 22px;
+		border-top: 3px solid var(--c-accent);
+	}
+
+	.key--contour {
+		width: 22px;
+		height: 8px;
+		border: 1px solid var(--c-line);
+		border-radius: 50%;
+	}
+
+	.disclaimer {
+		font-size: var(--t-xs);
+		color: var(--c-text-2);
+		max-width: 68ch;
+	}
+</style>

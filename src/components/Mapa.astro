@@ -2,90 +2,118 @@
 import Layout from '../layouts/Layout.astro';
 import SiteFooter from './SiteFooter.astro';
 import SiteHeader from './SiteHeader.astro';
-import { coreScopeEmbedUrl, coreScopeUrl, homePath, languages, mapPath, ui, type Lang } from '../i18n/ui';
+import ExternalIcon from './ExternalIcon.astro';
+import { coreScopeEmbedUrl, linkAttrs } from '../config/links';
+import { languages, mapPath, ui, type Lang } from '../i18n/ui';
 
 interface Props {
 	lang: Lang;
 }
 
 const { lang } = Astro.props;
-const t = ui[lang].mapa;
+const t = ui[lang];
+const m = t.mapa;
 const otherLang = (Object.keys(languages) as Lang[]).find((l) => l !== lang)!;
+const corescope = linkAttrs('corescope');
 ---
 
-<Layout
-	lang={lang}
-	title={t.meta.title}
-	description={t.meta.description}
-	ogLocale={ui[lang].meta.ogLocale}
-	alternates={mapPath}
->
-	<SiteHeader lang={lang} base={homePath[lang]} altHref={mapPath[otherLang]} />
+<Layout lang={lang} title={m.meta.title} description={m.meta.description} alternates={mapPath}>
+	<SiteHeader lang={lang} altHref={mapPath[otherLang]} />
 
 	<main id="contenido">
-		<section id="top" class="px-6 pb-6 pt-10 sm:pt-14">
-			<div class="mx-auto flex max-w-6xl flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-				<div class="max-w-2xl">
-					<h1 class="font-display text-5xl font-bold leading-[0.95] tracking-tight text-[var(--ink)] sm:text-6xl">
-						{t.title}
-					</h1>
-					<p class="mt-4 text-lg leading-relaxed text-[var(--pine)]">{t.lead}</p>
+		<section class="intro" aria-labelledby="map-title">
+			<div class="container intro__grid">
+				<div>
+					<p class="intro__eyebrow mono">{m.eyebrow}</p>
+					<h1 id="map-title">{m.title}</h1>
+					<p class="intro__lead">{m.lead}</p>
 				</div>
-				<div class="flex flex-wrap items-center gap-x-6 gap-y-3">
-					<a href={coreScopeUrl} class="btn-primary" target="_blank" rel="noopener">
-						{t.open}
-						<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" fill="none">
-							<path d="M6 3H3v10h10v-3M9 3h4v4M13 3 7 9" stroke="currentColor" stroke-width="1.6" stroke-linecap="square" />
-						</svg>
-						<span class="sr-only">{t.newTab}</span>
+				<div class="intro__actions">
+					<a class="btn btn--primary" {...corescope}>
+						{m.open}
+						<ExternalIcon />
+						<span class="visually-hidden">{t.a11y.newTab}</span>
 					</a>
-					<a href="#aparecer" class="text-[var(--pine)] underline decoration-[var(--pine)] underline-offset-4 hover:text-[var(--ink)]">
-						{t.howLink}
+					<a class="inline-link" href="#aparecer">
+						{m.howLink}
 					</a>
 				</div>
 			</div>
 		</section>
 
-		<!-- Full-bleed live map. The frame is the page: keep it as wide and tall as the viewport allows,
-		     but leave page margin above/below so touch users can still scroll past it. -->
-		<section class="map-stage relative px-0 sm:px-6">
+		<!-- Wide live map. Leave page margin above and below so touch users can still scroll past it. -->
+		<section class="stage" aria-label={m.frameTitle}>
 			<!-- The embedded map holds many focusable markers; let keyboard users jump past it. -->
-			<a href="#aparecer" class="skip-map">{t.skipMap}</a>
-			<div class="map-frame mx-auto max-w-[96rem]">
-				<iframe
-					src={coreScopeEmbedUrl}
-					title={t.frameTitle}
-					loading="eager"
-					referrerpolicy="strict-origin-when-cross-origin"
-					allow="fullscreen; geolocation"
-					class="block h-full w-full"
-				></iframe>
+			<a href="#aparecer" class="skip-map">
+				{m.skipMap}
+			</a>
+			<div
+				class="frame"
+				data-map-frame
+				data-src-dark={coreScopeEmbedUrl('dark')}
+				data-src-light={coreScopeEmbedUrl('light')}
+				data-title={m.frameTitle}
+			>
+				<noscript>
+					<iframe
+						src={coreScopeEmbedUrl('dark')}
+						title={m.frameTitle}
+						referrerpolicy="strict-origin-when-cross-origin"
+						allow="fullscreen; geolocation"
+					></iframe>
+				</noscript>
 			</div>
-			<p class="mx-auto mt-3 max-w-[96rem] px-6 text-sm text-[var(--pine-soft)] sm:px-0">
-				{t.caption}
-				<a href={coreScopeUrl} target="_blank" rel="noopener" class="underline decoration-[var(--pine)] underline-offset-4 hover:text-[var(--ink)]">
-					{t.captionLink}<span class="sr-only"> {t.newTab}</span>
-				</a>.
+			<script>
+				// CoreScope reads ?theme= once per load, and a hash-only change does not
+				// reload a frame, so each theme gets a fresh iframe.
+				const frame = document.querySelector<HTMLElement>('[data-map-frame]');
+				function mount(theme: string) {
+					if (!frame) return;
+					const iframe = document.createElement('iframe');
+					iframe.src = (theme === 'light' ? frame.dataset.srcLight : frame.dataset.srcDark) ?? '';
+					iframe.title = frame.dataset.title ?? '';
+					iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+					iframe.allow = 'fullscreen; geolocation';
+					frame.replaceChildren(iframe);
+				}
+				let current = document.documentElement.dataset.theme ?? 'dark';
+				mount(current);
+				document.addEventListener('mcpr:theme', (e) => {
+					const next = (e as CustomEvent<string>).detail;
+					if (next !== current) mount((current = next));
+				});
+			</script>
+			<p class="container stage__caption">
+				{m.caption}
+				<a class="inline-link" {...corescope}>
+					{m.captionLink}
+					<span class="visually-hidden"> {t.a11y.newTab}</span>
+				</a>
+				.
 			</p>
 		</section>
 
-		<section id="aparecer" class="mt-14 border-t border-[var(--line)] px-6 py-20">
-			<div class="mx-auto max-w-6xl">
-				<h2 class="font-display text-3xl font-bold text-[var(--ink)] sm:text-4xl">{t.how.title}</h2>
-				<p class="mt-4 max-w-2xl text-lg leading-relaxed text-[var(--pine)]">{t.how.intro}</p>
-				<ul class="mt-10 grid gap-8 md:grid-cols-3">
-					{t.how.items.map((i) => (
-						<li class="border-l-2 border-[var(--signal)] py-1 pl-5">
-							<h3 class="font-display text-xl font-semibold text-[var(--ink)]">{i.title}</h3>
-							<p class="mt-2 leading-relaxed text-[var(--pine)]">{i.desc}</p>
+		<section id="aparecer" class="section" aria-labelledby="how-title">
+			<div class="container">
+				<header class="section-head">
+					<h2 id="how-title">{m.how.title}</h2>
+					<p>{m.how.intro}</p>
+				</header>
+				<ul class="items">
+					{m.how.items.map((i) => (
+						<li>
+							<h3>{i.title}</h3>
+							<p>{i.desc}</p>
 						</li>
 					))}
 				</ul>
-				<p class="mt-12 max-w-2xl text-[var(--pine)]">
-					{t.how.more}
-					<a href={coreScopeUrl} target="_blank" rel="noopener" class="underline decoration-[var(--pine)] underline-offset-4 hover:text-[var(--ink)]">
-						{t.open}<span class="sr-only"> {t.newTab}</span>
-					</a>.
+				<p class="more">
+					{m.how.more}
+					<a class="inline-link" {...corescope}>
+						{m.open}
+						<span class="visually-hidden"> {t.a11y.newTab}</span>
+					</a>
+					.
 				</p>
 			</div>
 		</section>
@@ -95,37 +123,140 @@ const otherLang = (Object.keys(languages) as Lang[]).find((l) => l !== lang)!;
 </Layout>
 
 <style>
+	.intro {
+		padding-block: clamp(2rem, 1rem + 3.5vw, 4rem) var(--s-6);
+	}
+
+	.intro__grid {
+		display: grid;
+		gap: var(--s-6);
+		align-items: end;
+	}
+
+	@media (min-width: 64rem) {
+		.intro__grid {
+			grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+			gap: var(--s-8);
+		}
+	}
+
+	.intro__eyebrow {
+		color: var(--c-accent-2);
+		margin-bottom: var(--s-4);
+	}
+
+	h1 {
+		font-size: var(--t-h2);
+		font-weight: 700;
+		font-variation-settings: 'opsz' 96;
+	}
+
+	.intro__lead {
+		margin-top: var(--s-4);
+		max-width: 38rem;
+		color: var(--c-text-2);
+		font-size: var(--t-lg);
+		line-height: 1.5;
+	}
+
+	.intro__actions {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--s-3) var(--s-5);
+	}
+
+	.stage {
+		position: relative;
+		padding-bottom: var(--s-6);
+	}
+
 	.skip-map {
 		position: absolute;
-		left: -9999px;
+		left: var(--s-4);
+		top: var(--s-4);
 		z-index: 10;
-		background: var(--signal);
-		color: var(--paper);
-		padding: 0.75rem 1.25rem;
+		padding: var(--s-3) var(--s-4);
+		background: var(--c-accent);
+		color: var(--c-on-accent);
 		font-weight: 600;
+		border-radius: var(--r-control);
+		transform: translateY(-200%);
+		opacity: 0;
 	}
+
 	.skip-map:focus {
-		left: 1.5rem;
-		top: 1rem;
+		transform: none;
+		opacity: 1;
 	}
 
-	.map-frame {
-		/* Viewport minus the sticky header, with a floor so short laptop screens still get a usable map. */
+	.frame {
+		max-width: 96rem;
+		margin-inline: auto;
+		/* Viewport minus the header, with a floor so short laptop screens still get a usable map. */
 		height: max(28rem, calc(100svh - 12rem));
-		border-block: 1px solid var(--pine);
-		background-color: var(--paper-raised);
+		border-block: 1px solid var(--c-border-strong);
+		background: var(--c-surface);
 	}
 
-	@media (min-width: 640px) {
-		.map-frame {
-			border-inline: 1px solid var(--pine);
+	.frame :global(iframe) {
+		display: block;
+		width: 100%;
+		height: 100%;
+		border: 0;
+	}
+
+	@media (min-width: 48rem) {
+		.frame {
+			width: calc(100% - var(--gutter) * 2);
+			border-inline: 1px solid var(--c-border-strong);
+			border-radius: var(--r-card);
 		}
 	}
 
-	/* Phones: shorter frame so there is always page to grab above and below it when scrolling. */
-	@media (max-width: 639px) {
-		.map-frame {
+	/* Phones: shorter frame so there is always page to grab above and below it. */
+	@media (max-width: 47.99rem) {
+		.frame {
 			height: 70svh;
 		}
+	}
+
+	.stage__caption {
+		margin-top: var(--s-3);
+		font-size: var(--t-sm);
+		color: var(--c-text-2);
+	}
+
+	.items {
+		display: grid;
+		gap: var(--s-6);
+	}
+
+	@media (min-width: 48rem) {
+		.items {
+			grid-template-columns: repeat(3, 1fr);
+		}
+	}
+
+	.items li {
+		display: grid;
+		gap: var(--s-2);
+		align-content: start;
+		padding-top: var(--s-4);
+		border-top: 1px solid var(--c-border);
+	}
+
+	.items h3 {
+		font-size: var(--t-h3);
+	}
+
+	.items p {
+		color: var(--c-text-2);
+	}
+
+	.more {
+		margin-top: var(--s-7);
+		max-width: 44rem;
+		color: var(--c-text-2);
 	}
 </style>
