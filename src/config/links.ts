@@ -172,6 +172,12 @@ export const site = {
 	parentDescriptor: 'Puerto Rico Mesh Network Community',
 } as const;
 
+/** Ackee: self-hosted, cookie-free visit counts. Loaded in production builds only. */
+export const ackee = {
+	server: 'https://meshcore-ackee-7307a6-196-12-191-109.sslip.io',
+	domainId: '3a5cc6ea-5627-4353-ae4f-494072b01055',
+} as const;
+
 /** CoreScope's embed mode hides its own navigation; only #/map and #/channels support it. */
 export const coreScopeEmbedUrl = (theme: 'dark' | 'light') =>
 	`${links.corescope.url}#/map?embed=1&theme=${theme}`;

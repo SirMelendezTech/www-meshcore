@@ -4,7 +4,7 @@ import '@fontsource-variable/atkinson-hyperlegible-next/wght.css';
 import '@fontsource/ibm-plex-mono/latin-400.css';
 import '@fontsource/ibm-plex-mono/latin-500.css';
 import '../styles/global.css';
-import { links, site } from '../config/links';
+import { ackee, links, site } from '../config/links';
 import { defaultLang, homePath, languages, ui, type Lang } from '../i18n/ui';
 
 interface Props {
@@ -109,6 +109,15 @@ const jsonLd = {
 		<meta name="twitter:image:alt" content={t.meta.ogImageAlt} />
 
 		<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+		{import.meta.env.PROD && (
+			<script
+				is:inline
+				async
+				src={`${ackee.server}/tracker.js`}
+				data-ackee-server={ackee.server}
+				data-ackee-domain-id={ackee.domainId}
+			/>
+		)}
 	</head>
 	<body>
 		<a class="skip" href="#contenido">

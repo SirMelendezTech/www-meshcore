@@ -384,6 +384,7 @@ const es = {
 		legal:
 			'MeshCore Puerto Rico es parte de PRMSH, un portal comunitario independiente. No es el sitio oficial de MeshCore ni está afiliado ni respaldado por MeshCore Technologies Ltd o los desarrolladores de MeshCore. El logo de MeshCore es marca registrada de MeshCore Technologies Ltd. Meshtastic® es marca registrada de Meshtastic LLC.',
 		emergency: 'No es un servicio de emergencia. En una emergencia, llama al 911.',
+		analytics: 'Este sitio cuenta visitas de forma anónima con Ackee, sin cookies.',
 		rights: 'PRMSH',
 		source: 'Código fuente',
 	},
@@ -777,6 +778,7 @@ const en: Dictionary = {
 		legal:
 			'MeshCore Puerto Rico is part of PRMSH, an independent community portal. It is not the official MeshCore site and is not affiliated with or endorsed by MeshCore Technologies Ltd or the MeshCore developers. The MeshCore logo is a registered trademark of MeshCore Technologies Ltd. Meshtastic® is a registered trademark of Meshtastic LLC.',
 		emergency: 'Not an emergency service. In an emergency, call 911.',
+		analytics: 'This site counts visits anonymously with Ackee, without cookies.',
 		rights: 'PRMSH',
 		source: 'Source code',
 	},
