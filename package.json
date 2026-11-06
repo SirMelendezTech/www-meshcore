@@ -14,7 +14,8 @@
     "format:check": "prettier --check .",
     "astro": "astro",
     "og": "node tools/build-og.mjs",
-    "icons": "node tools/build-icons.mjs"
+    "icons": "node tools/build-icons.mjs",
+    "terrain": "node tools/recolor-terrain.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",

@@ -15,7 +15,7 @@ const t = protocolos[lang];
 const otherLang = (Object.keys(languages) as Lang[]).find((l) => l !== lang)!;
 const home = homePath[lang];
 
-// PRMSH colour convention: teal marks MeshCore, lime marks Meshtastic.
+// Blue marks MeshCore, the plain accent marks Meshtastic.
 // MeshCore goes first: it's what this site is about.
 const pairs = (s: { meshcore: Col; meshtastic: Col }) => [
 	{ ...s.meshcore, tone: 'mc' },

@@ -18,20 +18,22 @@ Construido con [Astro](https://astro.build) y [Svelte](https://svelte.dev)
 
 ## Sistema de diseño
 
-El sitio usa el sistema de diseño de prmsh.com (repositorio `portada-prmsh`),
-copiado localmente para que cada sitio se despliegue por separado:
+La estructura viene de prmsh.com (repositorio `portada-prmsh`): tipografía,
+escala, espaciado, botones, encabezado, pie, relieve y menú móvil, copiados aquí
+para que cada sitio se despliegue por separado. El **color** no es el de
+prmsh.com: sigue la paleta oficial de [meshcore.io](https://meshcore.io/).
 
-| Aquí                                                                               | Origen en `portada-prmsh`                    |
-| ---------------------------------------------------------------------------------- | -------------------------------------------- |
-| `src/styles/tokens.css`                                                            | `src/styles/tokens.css` (idéntico)           |
-| `src/styles/global.css`                                                            | `src/styles/global.css` + adiciones al final |
-| `Wordmark`, `ExternalIcon`, `MobileNav`, `Community`, `ClosingCta`, `TerrainPlate` | componentes del mismo nombre (adaptados)     |
-| `public/terrain/puerto-rico.svg`, `src/data/map-frame.json`, `src/lib/map.ts`      | mismo relieve SRTM / USGS 3DEP               |
-| `src/components/svelte-bits/DecryptedText.svelte`                                  | Svelte Bits, adaptado por PRMSH              |
+| Tema   | Fondo     | Superficie | Texto     | Acción    | Azul      |
+| :----- | :-------- | :--------- | :-------- | :-------- | :-------- |
+| Oscuro | `#111827` | `#1f2937`  | `#f9fafb` | `#ffffff` | `#60a5fa` |
+| Claro  | `#f9fafb` | `#ffffff`  | `#111827` | `#111827` | `#1d4ed8` |
 
-Si cambias un token en prmsh.com, cópialo aquí. Convención de color de la
-familia: verde lima (`--c-accent`) para acciones y la ruta activa; verde
-azulado (`--c-accent-2`) para nodos y MeshCore.
+- Los colores viven solo en `src/styles/tokens.css`. Los valores claros aparecen
+  dos veces a propósito: preferencia del sistema y elección con el botón.
+- El tema se fija antes del primer pintado (script en `Layout.astro`), se guarda
+  en `localStorage` (`mcpr-theme`) y sigue al sistema hasta que la persona elige.
+- `npm run terrain` regenera los dos relieves de `public/terrain/`.
+- El mapa de CoreScope recibe `?theme=` y se recarga al cambiar de modo.
 
 ## Enlaces y datos
 
@@ -67,6 +69,7 @@ sigue funcionando.
 | `npm run build`   | Genera el sitio en `./dist/` (incluye el sitemap)         |
 | `npm run preview` | Previsualiza el build                                     |
 | `npm run og`      | Regenera `public/og.png` y los iconos PWA (ver el script) |
+| `npm run terrain` | Regenera los relieves oscuro y claro                      |
 | `npm run icons`   | Regenera `favicon.ico` y `apple-touch-icon.png`           |
 
 ## Despliegue

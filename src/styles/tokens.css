@@ -1,19 +1,36 @@
 /*
- * PRMSH design tokens. Mirrors portada-prmsh/src/styles/tokens.css (prmsh.com)
- * so both sites read as one family. Change values there first, then copy here.
+ * Design tokens. Scale, type, spacing and shape mirror prmsh.com
+ * (portada-prmsh/src/styles/tokens.css). Colour follows the official
+ * meshcore.io palette: slate surfaces, white or near-black actions, blue accents.
+ *
+ * Dark is the base. The light values appear twice on purpose: once for
+ * visitors whose system prefers light before any choice (and without JS),
+ * and once for an explicit choice from the theme button.
  */
 :root {
+	color-scheme: dark;
+
 	/* Colour */
-	--c-bg: #0b0d0c;
-	--c-surface: #131715;
-	--c-surface-2: #1b211d;
-	--c-text: #f0f2e9;
-	--c-text-2: #a1aaa0;
-	--c-accent: #b7f36b; /* interaction / Meshtastic route signal */
-	--c-accent-2: #65c8b0; /* nodes / MeshCore */
-	--c-border: #303831;
-	--c-border-strong: #5f6f63; /* ≥3:1 on bg for control outlines */
-	--c-on-accent: #0b0d0c;
+	--c-bg: #111827;
+	--c-surface: #1f2937;
+	--c-surface-2: #283447;
+	--c-text: #f9fafb;
+	--c-text-2: #a7afbc;
+	--c-text-3: #8d96a5; /* map ticks */
+	--c-accent: #ffffff; /* primary actions, active route */
+	--c-accent-hover: #e5e7eb;
+	--c-on-accent: #111827;
+	--c-accent-soft: rgb(255 255 255 / 0.14);
+	--c-accent-2: #60a5fa; /* nodes, MeshCore, links */
+	--c-accent-2-soft: rgb(96 165 250 / 0.12);
+	--c-accent-2-mid: rgb(96 165 250 / 0.6);
+	--c-border: #374151;
+	--c-border-strong: #808a9a; /* ≥3:1 on every surface, for control outlines */
+	--c-line: #6b7280; /* glyph strokes, contour key */
+	--c-region: #c3cad5; /* map region names */
+	--c-header: rgb(17 24 39 / 0.92);
+	--terrain: url('/terrain/puerto-rico.svg');
+	--terrain-fade: 0.45;
 
 	/* Type */
 	--f-display: 'Bricolage Grotesque Variable', 'Bricolage Grotesque', system-ui, sans-serif;
@@ -54,5 +71,55 @@
 	--r-card: 2px;
 
 	--ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-	--focus: 2px solid var(--c-accent);
+	--focus: 2px solid var(--c-accent-2);
+}
+
+@media (prefers-color-scheme: light) {
+	:root:not([data-theme='dark']) {
+		color-scheme: light;
+		--c-bg: #f9fafb;
+		--c-surface: #ffffff;
+		--c-surface-2: #f3f4f6;
+		--c-text: #111827;
+		--c-text-2: #4b5563;
+		--c-text-3: #5f6875;
+		--c-accent: #111827;
+		--c-accent-hover: #000000;
+		--c-on-accent: #ffffff;
+		--c-accent-soft: rgb(17 24 39 / 0.1);
+		--c-accent-2: #1d4ed8;
+		--c-accent-2-soft: rgb(29 78 216 / 0.08);
+		--c-accent-2-mid: rgb(29 78 216 / 0.55);
+		--c-border: #e5e7eb;
+		--c-border-strong: #6b7280;
+		--c-line: #858e9c;
+		--c-region: #374151;
+		--c-header: rgb(249 250 251 / 0.92);
+		--terrain: url('/terrain/puerto-rico-light.svg');
+		--terrain-fade: 0.7;
+	}
+}
+
+:root[data-theme='light'] {
+	color-scheme: light;
+	--c-bg: #f9fafb;
+	--c-surface: #ffffff;
+	--c-surface-2: #f3f4f6;
+	--c-text: #111827;
+	--c-text-2: #4b5563;
+	--c-text-3: #5f6875;
+	--c-accent: #111827;
+	--c-accent-hover: #000000;
+	--c-on-accent: #ffffff;
+	--c-accent-soft: rgb(17 24 39 / 0.1);
+	--c-accent-2: #1d4ed8;
+	--c-accent-2-soft: rgb(29 78 216 / 0.08);
+	--c-accent-2-mid: rgb(29 78 216 / 0.55);
+	--c-border: #e5e7eb;
+	--c-border-strong: #6b7280;
+	--c-line: #858e9c;
+	--c-region: #374151;
+	--c-header: rgb(249 250 251 / 0.92);
+	--terrain: url('/terrain/puerto-rico-light.svg');
+	--terrain-fade: 0.7;
 }

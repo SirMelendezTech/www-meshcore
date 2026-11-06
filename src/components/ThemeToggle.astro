@@ -1,0 +1,137 @@
+---
+import { ui, type Lang } from '../i18n/ui';
+
+interface Props {
+	lang: Lang;
+}
+const t = ui[Astro.props.lang].a11y;
+---
+
+<!--
+	Names the mode it switches to. Only the matching label and icon are shown,
+	so the accessible name always says what pressing it does.
+	Hidden without JS, where the page simply follows the system setting.
+-->
+<button class="theme mono" type="button" data-theme-toggle>
+	<span class="theme__to-light">
+		<svg viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false">
+			<circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.5"></circle>
+			<path
+				d="M8 1.5v1.5M8 13v1.5M1.5 8H3M13 8h1.5M3.4 3.4l1 1M11.6 11.6l1 1M12.6 3.4l-1 1M4.4 11.6l-1 1"
+				stroke="currentColor"
+				stroke-width="1.5"
+				stroke-linecap="round"
+			></path>
+		</svg>
+		<span class="theme__label">{t.themeLight}</span>
+	</span>
+	<span class="theme__to-dark">
+		<svg viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false">
+			<path
+				d="M13.5 9.6A5.8 5.8 0 0 1 6.4 2.5a5.8 5.8 0 1 0 7.1 7.1Z"
+				stroke="currentColor"
+				stroke-width="1.5"
+				stroke-linejoin="round"
+			></path>
+		</svg>
+		<span class="theme__label">{t.themeDark}</span>
+	</span>
+</button>
+
+<script>
+	const KEY = 'mcpr-theme';
+	const root = document.documentElement;
+	const prefersLight = window.matchMedia('(prefers-color-scheme: light)');
+
+	function stored() {
+		try {
+			const v = localStorage.getItem(KEY);
+			return v === 'light' || v === 'dark' ? v : null;
+		} catch {
+			return null;
+		}
+	}
+
+	function apply(theme: string) {
+		root.dataset.theme = theme;
+		const bar = theme === 'light' ? '#F9FAFB' : '#111827';
+		document
+			.querySelectorAll('meta[name="theme-color"]')
+			.forEach((m) => m.setAttribute('content', bar));
+		document.dispatchEvent(new CustomEvent('mcpr:theme', { detail: theme }));
+	}
+
+	document.querySelectorAll('[data-theme-toggle]').forEach((button) =>
+		button.addEventListener('click', () => {
+			const next = root.dataset.theme === 'light' ? 'dark' : 'light';
+			try {
+				localStorage.setItem(KEY, next);
+			} catch {
+				// Private mode: the choice still applies to this page.
+			}
+			apply(next);
+		}),
+	);
+
+	// Follow the system until the visitor chooses; keep other tabs in step.
+	prefersLight.addEventListener('change', (e) => {
+		if (!stored()) apply(e.matches ? 'light' : 'dark');
+	});
+	window.addEventListener('storage', (e) => {
+		if (e.key === KEY) apply(stored() ?? (prefersLight.matches ? 'light' : 'dark'));
+	});
+	apply(root.dataset.theme ?? 'dark');
+</script>
+
+<style>
+	.theme {
+		display: inline-flex;
+		align-items: center;
+		min-width: 44px;
+		min-height: 44px;
+		padding: 0;
+		border: 0;
+		background: transparent;
+		color: var(--c-text-2);
+		cursor: pointer;
+		transition: color 160ms var(--ease-out);
+	}
+
+	.theme:hover {
+		color: var(--c-text);
+	}
+
+	.theme > span {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--s-2);
+	}
+
+	.theme svg {
+		width: 1rem;
+		height: 1rem;
+		flex: none;
+	}
+
+	:global(html:not([data-theme])) .theme,
+	:global(html[data-theme='light']) .theme__to-light,
+	:global(html[data-theme='dark']) .theme__to-dark {
+		display: none;
+	}
+
+	/* Phones: icon only; the label stays available to assistive tech. */
+	@media (max-width: 29.99rem) {
+		.theme {
+			justify-content: center;
+		}
+
+		.theme__label {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			overflow: hidden;
+			clip: rect(0 0 0 0);
+			white-space: nowrap;
+		}
+	}
+</style>

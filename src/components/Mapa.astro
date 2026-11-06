@@ -47,15 +47,42 @@ const corescope = linkAttrs('corescope');
 			<a href="#aparecer" class="skip-map">
 				{m.skipMap}
 			</a>
-			<div class="frame">
-				<iframe
-					src={coreScopeEmbedUrl}
-					title={m.frameTitle}
-					loading="eager"
-					referrerpolicy="strict-origin-when-cross-origin"
-					allow="fullscreen; geolocation"
-				></iframe>
+			<div
+				class="frame"
+				data-map-frame
+				data-src-dark={coreScopeEmbedUrl('dark')}
+				data-src-light={coreScopeEmbedUrl('light')}
+				data-title={m.frameTitle}
+			>
+				<noscript>
+					<iframe
+						src={coreScopeEmbedUrl('dark')}
+						title={m.frameTitle}
+						referrerpolicy="strict-origin-when-cross-origin"
+						allow="fullscreen; geolocation"
+					></iframe>
+				</noscript>
 			</div>
+			<script>
+				// CoreScope reads ?theme= once per load, and a hash-only change does not
+				// reload a frame, so each theme gets a fresh iframe.
+				const frame = document.querySelector<HTMLElement>('[data-map-frame]');
+				function mount(theme: string) {
+					if (!frame) return;
+					const iframe = document.createElement('iframe');
+					iframe.src = (theme === 'light' ? frame.dataset.srcLight : frame.dataset.srcDark) ?? '';
+					iframe.title = frame.dataset.title ?? '';
+					iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+					iframe.allow = 'fullscreen; geolocation';
+					frame.replaceChildren(iframe);
+				}
+				let current = document.documentElement.dataset.theme ?? 'dark';
+				mount(current);
+				document.addEventListener('mcpr:theme', (e) => {
+					const next = (e as CustomEvent<string>).detail;
+					if (next !== current) mount((current = next));
+				});
+			</script>
 			<p class="container stage__caption">
 				{m.caption}
 				<a class="inline-link" {...corescope}>
@@ -172,7 +199,7 @@ const corescope = linkAttrs('corescope');
 		background: var(--c-surface);
 	}
 
-	.frame iframe {
+	.frame :global(iframe) {
 		display: block;
 		width: 100%;
 		height: 100%;

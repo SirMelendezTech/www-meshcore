@@ -13,15 +13,7 @@ const c = t.closing;
 
 <section class="section closing" aria-labelledby="closing-title">
 	<div class="container closing__inner">
-		<img
-			class="closing__island"
-			src="/terrain/puerto-rico.svg"
-			width="1544"
-			height="537"
-			alt=""
-			loading="lazy"
-			decoding="async"
-		/>
+		<div class="closing__island"></div>
 		<div class="closing__text">
 			<h2 id="closing-title">{c.title}</h2>
 			<p>{c.body}</p>
@@ -30,7 +22,7 @@ const c = t.closing;
 			<a class="btn btn--primary" href="#recursos">
 				{c.resources}
 			</a>
-			<a class="btn btn--secondary btn--teal" {...linkAttrs('discord')}>
+			<a class="btn btn--secondary btn--blue" {...linkAttrs('discord')}>
 				{c.discord}
 				<ExternalIcon />
 				<span class="visually-hidden">{t.a11y.newTab}</span>
@@ -56,8 +48,9 @@ const c = t.closing;
 		right: var(--gutter);
 		bottom: -2rem;
 		width: min(46rem, 70%);
-		height: auto;
-		opacity: 0.35;
+		aspect-ratio: 1544 / 537;
+		background: var(--terrain) center / 100% 100% no-repeat;
+		opacity: var(--terrain-fade);
 		pointer-events: none;
 	}
 
@@ -91,7 +84,7 @@ const c = t.closing;
 		.closing__island {
 			width: 100%;
 			right: 0;
-			opacity: 0.2;
+			opacity: calc(var(--terrain-fade) * 0.6);
 		}
 	}
 </style>

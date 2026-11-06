@@ -6,7 +6,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 const svg = await readFile(new URL('../public/favicon.svg', import.meta.url));
 await sharp(svg, { density: 1200 })
 	.resize(180, 180)
-	.flatten({ background: '#0B0D0C' })
+	.flatten({ background: '#111827' })
 	.png()
 	.toFile(new URL('../public/apple-touch-icon.png', import.meta.url).pathname);
 

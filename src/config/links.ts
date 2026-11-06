@@ -173,4 +173,5 @@ export const site = {
 } as const;
 
 /** CoreScope's embed mode hides its own navigation; only #/map and #/channels support it. */
-export const coreScopeEmbedUrl = `${links.corescope.url}#/map?embed=1&theme=dark`;
+export const coreScopeEmbedUrl = (theme: 'dark' | 'light') =>
+	`${links.corescope.url}#/map?embed=1&theme=${theme}`;

@@ -60,14 +60,8 @@ const regions = [
 	</div>
 
 	<div class="plate__map" style={`--ar: ${MAP_W} / ${MAP_H}`} role="img" aria-label={m.label}>
-		<img
-			src="/terrain/puerto-rico.svg"
-			width={MAP_W}
-			height={MAP_H}
-			alt=""
-			fetchpriority="high"
-			decoding="async"
-		/>
+		<!-- A CSS background so only the active theme's relief is downloaded. -->
+		<div class="plate__terrain"></div>
 
 		<svg
 			class="plate__overlay"
@@ -260,7 +254,11 @@ const regions = [
 		margin: clamp(0.75rem, 2.5vw, 2.25rem);
 	}
 
-	.plate__map img,
+	.plate__terrain {
+		background: var(--terrain) center / 100% 100% no-repeat;
+	}
+
+	.plate__terrain,
 	.plate__overlay {
 		position: absolute;
 		inset: 0;
@@ -371,7 +369,7 @@ const regions = [
 	}
 
 	.tick {
-		color: #7d877c;
+		color: var(--c-text-3);
 		font-size: 0.6875rem;
 	}
 
@@ -391,7 +389,7 @@ const regions = [
 		font-size: clamp(0.6875rem, 0.55rem + 0.45vw, 0.875rem);
 		font-weight: 450;
 		letter-spacing: 0.06em;
-		color: #b9c2b7;
+		color: var(--c-region);
 		text-shadow: 0 0 6px var(--c-bg);
 	}
 
@@ -409,7 +407,7 @@ const regions = [
 		display: block;
 		font-size: 0.6875rem;
 		font-weight: 400;
-		color: var(--c-accent-2);
+		color: var(--c-text); /* sits on the highest relief band; blue falls below 4.5:1 there */
 	}
 
 	.label--n {
@@ -484,7 +482,7 @@ const regions = [
 
 	.key--flood {
 		width: 22px;
-		border-top: 2px solid rgb(101 200 176 / 0.6);
+		border-top: 2px solid var(--c-accent-2-mid);
 	}
 
 	.key--route {
@@ -495,7 +493,7 @@ const regions = [
 	.key--contour {
 		width: 22px;
 		height: 8px;
-		border: 1px solid #5d6d61;
+		border: 1px solid var(--c-line);
 		border-radius: 50%;
 	}
 

@@ -238,7 +238,7 @@
 	.stepper__step[aria-current='step'] {
 		color: var(--c-text);
 		border-color: var(--c-accent-2);
-		background: rgb(101 200 176 / 0.08);
+		background: var(--c-accent-2-soft);
 	}
 
 	.stepper__step .mono {
@@ -300,7 +300,7 @@
 	}
 
 	.halo {
-		fill: rgb(183 243 107 / 0.14);
+		fill: var(--c-accent-soft);
 		stroke: var(--c-accent);
 		stroke-width: 1.5;
 	}
