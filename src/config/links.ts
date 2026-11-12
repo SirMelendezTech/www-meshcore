@@ -178,6 +178,10 @@ export const ackee = {
 	domainId: '3a5cc6ea-5627-4353-ae4f-494072b01055',
 } as const;
 
-/** CoreScope's embed mode hides its own navigation; only #/map and #/channels support it. */
+/**
+ * Embeds CoreScope's live view. ?theme= works on every route, but ?embed=1 (which hides
+ * CoreScope's own navigation) is only honoured on #/map and #/channels, so #/live shows
+ * CoreScope's nav bars inside the frame.
+ */
 export const coreScopeEmbedUrl = (theme: 'dark' | 'light') =>
-	`${links.corescope.url}#/map?embed=1&theme=${theme}`;
+	`${links.corescope.url}#/live?theme=${theme}`;
