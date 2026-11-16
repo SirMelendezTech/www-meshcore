@@ -79,11 +79,7 @@ const groups = [
 			<p class="mono">
 				© <span id="year">{year}</span>
 				{f.rights} ·
-				<a
-					href="https://github.com/SirMelendezTech/www-meshcore"
-					target="_blank"
-					rel="noopener noreferrer"
-				>
+				<a {...linkAttrs('siteRepo')}>
 					{f.source}
 					<span class="visually-hidden"> {t.a11y.newTab}</span>
 				</a>

@@ -1,0 +1,25 @@
+name: Corrección de contenido
+description: Un dato incorrecto, un enlace roto o un error de traducción.
+labels: [contenido]
+body:
+  - type: input
+    id: page
+    attributes:
+      label: Página
+      description: URL de la página con el error.
+      placeholder: https://meshcore.prmsh.com/
+    validations:
+      required: true
+  - type: textarea
+    id: current
+    attributes:
+      label: Qué dice ahora
+    validations:
+      required: true
+  - type: textarea
+    id: fix
+    attributes:
+      label: Qué debería decir
+      description: Incluye la fuente oficial si es un dato técnico.
+    validations:
+      required: true

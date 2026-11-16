@@ -3,6 +3,7 @@ import Wordmark from './Wordmark.astro';
 import MobileNav from './MobileNav.svelte';
 import ExternalIcon from './ExternalIcon.astro';
 import ThemeToggle from './ThemeToggle.astro';
+import { siDiscord, siGithub } from 'simple-icons';
 import { links, linkAttrs } from '../config/links';
 import { homePath, mapPath, protocolsPath, ui, type Lang } from '../i18n/ui';
 
@@ -36,6 +37,11 @@ const pages = [
 		href: protocolsPath[lang],
 		'aria-current': current(protocolsPath[lang]),
 	},
+];
+// Icon-only links beside the call to action; each carries its own accessible name.
+const social = [
+	{ id: 'discord' as const, icon: siDiscord, label: t.a11y.discord },
+	{ id: 'siteRepo' as const, icon: siGithub, label: t.a11y.github },
 ];
 const join = { label: t.nav.join, ...linkAttrs('discord') };
 const back = { label: t.nav.back, ...linkAttrs('prmsh') };
@@ -97,6 +103,21 @@ const langSwitch = { label: t.switchTo.label, href: altHref, lang: t.switchTo.la
 				))}
 			</ul>
 		</nav>
+
+		<ul class="header__social">
+			{social.map((item) => (
+				<li>
+					<a {...linkAttrs(item.id)} title={item.label}>
+						<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+							<path d={item.icon.path} fill="currentColor" />
+						</svg>
+						<span class="visually-hidden">
+							{item.label} {t.a11y.newTab}
+						</span>
+					</a>
+				</li>
+			))}
+		</ul>
 
 		<a class="btn btn--primary header__cta" {...linkAttrs('discord')}>
 			{t.nav.join}
@@ -275,6 +296,31 @@ const langSwitch = { label: t.switchTo.label, href: altHref, lang: t.switchTo.la
 		background: var(--c-border);
 	}
 
+	.header__social {
+		display: flex;
+		align-items: center;
+		margin-inline-end: calc(var(--s-6) * -1 + var(--s-2));
+	}
+
+	.header__social a {
+		display: inline-grid;
+		place-items: center;
+		width: 44px;
+		height: 44px;
+		color: var(--c-text-2);
+		border-radius: var(--r-control);
+		transition: color 160ms var(--ease-out);
+	}
+
+	.header__social a:hover {
+		color: var(--c-text);
+	}
+
+	.header__social svg {
+		width: 1.25rem;
+		height: 1.25rem;
+	}
+
 	.header__cta {
 		min-height: 44px;
 		padding: 0.5rem 1rem;
@@ -295,11 +341,20 @@ const langSwitch = { label: t.switchTo.label, href: altHref, lang: t.switchTo.la
 		.header__mobile {
 			display: block;
 		}
+
+		.header__social {
+			margin-inline-end: calc(var(--s-6) * -1);
+		}
 	}
 
 	/* Phones: the header already names this site, so the bar keeps only the way back. */
 	@media (max-width: 29.99rem) {
 		.family__crumbs li[aria-current] {
+			display: none;
+		}
+
+		/* The menu already offers Discord; the brand needs the room. */
+		.header__social {
 			display: none;
 		}
 	}

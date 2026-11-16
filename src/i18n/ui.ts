@@ -55,6 +55,8 @@ const es = {
 		footerNav: 'Enlaces de MeshCore Puerto Rico',
 		home: 'MeshCore Puerto Rico, inicio',
 		parent: 'PRMSH, portal de la comunidad',
+		discord: 'Discord de la comunidad',
+		github: 'Código fuente del sitio en GitHub',
 	},
 	nav: {
 		inicio: 'Inicio',
@@ -450,6 +452,8 @@ const en: Dictionary = {
 		footerNav: 'MeshCore Puerto Rico links',
 		home: 'MeshCore Puerto Rico, home',
 		parent: 'PRMSH, community portal',
+		discord: 'Community Discord',
+		github: 'Site source code on GitHub',
 	},
 	nav: {
 		inicio: 'Home',
