@@ -16,6 +16,7 @@ export type LinkId =
 	| 'guiaCompanion'
 	| 'guiaRepeater'
 	| 'corescope'
+	| 'siteRepo'
 	// Community channels (shared by all of PRMSH)
 	| 'discord'
 	| 'facebook'
@@ -73,6 +74,13 @@ export const links = {
 		id: 'corescope',
 		url: 'https://corescope.prmsh.com/',
 		display: 'corescope.prmsh.com',
+		external: true,
+	},
+	// This site's source code.
+	siteRepo: {
+		id: 'siteRepo',
+		url: 'https://github.com/SirMelendezTech/www-meshcore',
+		display: 'github.com/SirMelendezTech/www-meshcore',
 		external: true,
 	},
 	discord: {
