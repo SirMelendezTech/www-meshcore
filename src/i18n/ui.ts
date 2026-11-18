@@ -339,22 +339,12 @@ const es = {
 		title: 'Construyamos la comunidad.',
 		body: 'La tecnología es solo una parte de la red. Comparte tus experiencias, resuelve dudas y conecta con otros entusiastas de Puerto Rico.',
 		scope:
-			'Estos canales son de toda la comunidad PRMSH, que reúne a usuarios de MeshCore y de Meshtastic. No son exclusivos de MeshCore.',
+			'Este Discord es de toda la comunidad PRMSH, que reúne a usuarios de MeshCore y de Meshtastic. No es exclusivo de MeshCore.',
 		channels: {
 			discord: {
 				name: 'Discord',
 				body: 'Conversaciones, ayuda y colaboración entre miembros. Aquí se comparten los datos del canal MeshCore de la isla.',
 				cta: 'Unirme a Discord',
-			},
-			facebook: {
-				name: 'Facebook',
-				body: 'Participa en las conversaciones de la comunidad.',
-				cta: 'Visitar grupo',
-			},
-			reddit: {
-				name: 'Reddit',
-				body: 'Comparte preguntas y experiencias sobre Meshtastic en Puerto Rico.',
-				cta: 'Visitar subreddit',
 			},
 		},
 		join: {
@@ -736,22 +726,12 @@ const en: Dictionary = {
 		title: "Let's build the community.",
 		body: 'Technology is only part of the network. Share your experiences, get answers and connect with other enthusiasts in Puerto Rico.',
 		scope:
-			'These channels belong to the whole PRMSH community, which brings together MeshCore and Meshtastic users. They are not MeshCore-only.',
+			'This Discord belongs to the whole PRMSH community, which brings together MeshCore and Meshtastic users. It is not MeshCore-only.',
 		channels: {
 			discord: {
 				name: 'Discord',
 				body: "Conversations, help and collaboration between members. This is where the island's MeshCore channel details are shared.",
 				cta: 'Join Discord',
-			},
-			facebook: {
-				name: 'Facebook',
-				body: "Take part in the community's conversations.",
-				cta: 'Visit group',
-			},
-			reddit: {
-				name: 'Reddit',
-				body: 'Share questions and experiences about Meshtastic in Puerto Rico.',
-				cta: 'Visit subreddit',
 			},
 		},
 		join: {
