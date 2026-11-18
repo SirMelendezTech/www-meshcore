@@ -1,5 +1,5 @@
 ---
-import { siDiscord, siFacebook, siReddit } from 'simple-icons';
+import { siDiscord } from 'simple-icons';
 import ExternalIcon from '../ExternalIcon.astro';
 import { links, linkAttrs } from '../../config/links';
 import { ui, type Lang } from '../../i18n/ui';
@@ -15,8 +15,6 @@ const c = copy.community;
 
 const channels = [
 	{ id: 'discord' as const, icon: siDiscord, primary: true, ...c.channels.discord },
-	{ id: 'facebook' as const, icon: siFacebook, primary: false, ...c.channels.facebook },
-	{ id: 'reddit' as const, icon: siReddit, primary: false, ...c.channels.reddit },
 ];
 ---
 
@@ -131,24 +129,8 @@ const channels = [
 		gap: var(--s-5);
 	}
 
-	@media (min-width: 48rem) {
-		.channels {
-			grid-template-columns: 1fr 1fr;
-		}
-
-		.channel--primary {
-			grid-column: 1 / -1;
-		}
-	}
-
-	@media (min-width: 64rem) {
-		.channels {
-			grid-template-columns: 1.35fr 1fr 1fr;
-		}
-
-		.channel--primary {
-			grid-column: auto;
-		}
+	.channels {
+		max-width: 44rem;
 	}
 
 	.channel {
