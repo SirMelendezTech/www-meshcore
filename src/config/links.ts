@@ -19,8 +19,6 @@ export type LinkId =
 	| 'siteRepo'
 	// Community channels (shared by all of PRMSH)
 	| 'discord'
-	| 'facebook'
-	| 'reddit'
 	// Official MeshCore project
 	| 'mcSite'
 	| 'mcDocs'
@@ -87,18 +85,6 @@ export const links = {
 		id: 'discord',
 		url: 'https://discord.gg/3v6rRhNRpD',
 		display: 'discord.gg/3v6rRhNRpD',
-		external: true,
-	},
-	facebook: {
-		id: 'facebook',
-		url: 'https://www.facebook.com/groups/3150733368394141/',
-		display: 'facebook.com/groups/3150733368394141',
-		external: true,
-	},
-	reddit: {
-		id: 'reddit',
-		url: 'https://www.reddit.com/r/MeshtasticPuertoRico/',
-		display: 'r/MeshtasticPuertoRico',
 		external: true,
 	},
 	mcSite: { id: 'mcSite', url: 'https://meshcore.io/', display: 'meshcore.io', external: true },
